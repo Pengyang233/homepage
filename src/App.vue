@@ -25,7 +25,7 @@
       </Icon>
       <!-- 页脚 -->
       <Transition name="fade" mode="out-in">
-        <Footer class="f-ter" v-show="!store.backgroundShow" />
+        <Footer v-if="showFooter && !store.backgroundShow" class="f-ter" />
       </Transition>
     </main>
   </Transition>
@@ -44,6 +44,8 @@ import Footer from "@/components/Footer.vue";
 import cursorInit from "@/utils/cursor.js";
 
 const store = mainStore();
+// 暂时隐藏页面底部版权栏，保留 Footer 组件及 LICENSE 中的原作者版权声明。
+const showFooter = false;
 let disposeCursor = () => {};
 const onEscape = (event) => {
   if (event.key === "Escape") {
