@@ -201,6 +201,7 @@ const jumpTo = (url) => {
               flex-direction: row;
               align-items: center;
               padding-bottom: 16px;
+              font-weight: 500;
 
               &:nth-last-of-type(1) {
                 padding: 0;
@@ -230,6 +231,7 @@ const jumpTo = (url) => {
         align-items: center;
         flex-direction: row;
         font-size: 18px;
+        font-weight: 600;
         margin-bottom: 16px;
 
         .i-icon {
