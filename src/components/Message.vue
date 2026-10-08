@@ -36,7 +36,7 @@ import { mainStore } from "@/store";
 const store = mainStore();
 
 // 主页站点logo
-const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
+const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO || "/images/icon/perrin-logo.png";
 // 艺术字名称独立于站点地址
 const siteDisplayName = "perrin";
 
