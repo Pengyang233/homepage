@@ -31,8 +31,7 @@ test("settings can be closed by Escape", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   await expect(page.locator("#main")).toBeVisible();
-  await page.locator(".description").click();
-  await expect(page.locator(".box")).toBeVisible();
+  await expect(page.locator(".description .quote-text")).toBeVisible();
   await page.getByRole("button", { name: "打开设置" }).click();
   await expect(page.locator(".set")).toBeVisible();
   await page.keyboard.press("Escape");

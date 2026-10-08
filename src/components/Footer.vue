@@ -26,11 +26,16 @@
         </a>
       </span>
     </div>
+    <button class="settings-trigger" type="button" aria-label="打开设置" title="设置"
+      @click="store.setOpenState = true">
+      <SettingTwo theme="outline" size="20" />
+    </button>
   </footer>
 </template>
 
 <script setup>
 import { mainStore } from "@/store";
+import { SettingTwo } from "@icon-park/vue-next";
 const upstreamUrl = "https://github.com/imsyy/home";
 
 const store = mainStore();
@@ -69,6 +74,30 @@ const siteUrl = computed(() => {
   white-space: nowrap;
   .power {
     animation: fade 0.3s;
+  }
+  .settings-trigger {
+    position: absolute;
+    right: clamp(10px, 2vw, 30px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 16%);
+    border-radius: 10px;
+    background: rgb(255 255 255 / 6%);
+    color: #fff;
+    opacity: 0.8;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+      background: rgb(255 255 255 / 16%);
+    }
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
   }
   .lrc {
     padding: 0 20px;

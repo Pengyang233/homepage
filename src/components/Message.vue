@@ -1,26 +1,19 @@
 <template>
-  <!-- 基本信息 -->
+  <!-- 每日一句直接显示在头像下方的原引号卡片中，无需点击展开。 -->
   <div class="message">
-    <!-- Logo -->
     <div class="logo">
       <img class="logo-img" :src="siteLogo" alt="logo" />
       <div class="name">
         <span class="bg">{{ siteDisplayName }}</span>
       </div>
     </div>
-    <!-- 简介 -->
-    <div class="description cards" @click="changeBox">
+    <div class="description cards">
       <div class="content">
-        <Icon size="16">
+        <Icon size="16" aria-hidden="true">
           <QuoteLeft />
         </Icon>
-        <Transition name="fade" mode="out-in">
-          <div :key="descriptionText.hello + descriptionText.text" class="text">
-            <p>{{ descriptionText.hello }}</p>
-            <p>{{ descriptionText.text }}</p>
-          </div>
-        </Transition>
-        <Icon size="16">
+        <Hitokoto />
+        <Icon size="16" aria-hidden="true">
           <QuoteRight />
         </Icon>
       </div>
@@ -31,50 +24,10 @@
 <script setup>
 import { Icon } from "@vicons/utils";
 import { QuoteLeft, QuoteRight } from "@vicons/fa";
-import { Error } from "@icon-park/vue-next";
-import { mainStore } from "@/store";
-const store = mainStore();
+import Hitokoto from "@/components/Hitokoto.vue";
 
-// 主页站点logo
 const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO || "/images/icon/perrin-logo.png";
-// 艺术字名称独立于站点地址
 const siteDisplayName = "perrin";
-
-// 简介区域文字
-const descriptionText = reactive({
-  hello: import.meta.env.VITE_DESC_HELLO,
-  text: import.meta.env.VITE_DESC_TEXT,
-});
-
-// 切换右侧功能区
-const changeBox = () => {
-  if (store.getInnerWidth >= 721) {
-    store.boxOpenState = !store.boxOpenState;
-  } else {
-    ElMessage({
-      message: "当前页面宽度不足以开启盒子",
-      grouping: true,
-      icon: h(Error, {
-        theme: "filled",
-        fill: "#efefef",
-      }),
-    });
-  }
-};
-
-// 监听状态变化
-watch(
-  () => store.boxOpenState,
-  (value) => {
-    if (value) {
-      descriptionText.hello = import.meta.env.VITE_DESC_HELLO_OTHER;
-      descriptionText.text = import.meta.env.VITE_DESC_TEXT_OTHER;
-    } else {
-      descriptionText.hello = import.meta.env.VITE_DESC_HELLO;
-      descriptionText.text = import.meta.env.VITE_DESC_TEXT;
-    }
-  },
-);
 </script>
 
 <style lang="scss" scoped>
@@ -85,8 +38,10 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 1.8vw, 20px);
 
-  // 让原版头像与 Pacifico 连体签名形成上下主视觉。
+  // 头像与 Pacifico 连体签名保持原有上下结构。
   .logo {
     display: flex;
     width: 100%;
@@ -107,7 +62,6 @@ watch(
     .name {
       width: 100%;
       min-width: 0;
-      // Pacifico 的 p/r 等手写笔画会超出字体度量盒；字标不能继承裁剪样式。
       padding: 0 0 16px;
       overflow: visible;
       text-align: center;
@@ -121,40 +75,23 @@ watch(
     }
   }
 
-  // 签名卡片和头像、字标共用左栏的水平中心线，保留展开交互。
   .description {
     width: 100%;
     max-width: 425px;
-    margin: 10px auto 0;
-    padding: 13px 16px;
+    margin: 0 auto;
+    padding: 12px 14px;
     animation: fade 0.5s;
 
     .content {
       display: flex;
       justify-content: space-between;
+      min-height: 76px;
+      align-items: center;
       gap: 10px;
-
-      .text {
-        min-width: 0;
-        flex: 1;
-        margin: 6px 0;
-        text-align: center;
-        line-height: 1.75rem;
-        font-size: clamp(15px, .85vw, 17px);
-        font-weight: 550;
-        transition: opacity 0.2s;
-
-        p:first-of-type {
-          font-family: "Pacifico-Regular";
-          font-weight: 400;
-        }
-        p {
-          overflow-wrap: anywhere;
-        }
-      }
 
       .xicon {
         flex: none;
+        &:first-of-type { align-self: flex-start; }
         &:last-of-type {
           align-self: flex-end;
         }
@@ -164,33 +101,24 @@ watch(
 
   @media (max-width: 720px) {
     max-width: 100%;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 14px;
 
     .logo {
       align-items: center;
       gap: 4px;
-      .logo-img {
-        width: clamp(120px, 35vw, 148px);
-      }
+      .logo-img { width: clamp(120px, 35vw, 148px); }
       .name {
         padding: 0 0 12px;
-        .bg {
-          font-size: clamp(3.1rem, 12vw, 4.4rem);
-        }
+        .bg { font-size: clamp(3.1rem, 12vw, 4.4rem); }
       }
     }
 
     .description {
       max-width: 420px;
-      margin-top: 8px;
-      padding: 10px 14px;
-      pointer-events: none;
-      .content .text {
-        flex: 1;
-      }
+      margin-top: 0;
+      padding: 10px 12px;
     }
   }
 }

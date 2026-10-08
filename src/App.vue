@@ -9,8 +9,8 @@
       <div class="container" v-show="!store.backgroundShow">
         <section class="all" v-show="!store.setOpenState">
           <MainLeft />
-          <MainRight v-show="!store.boxOpenState" />
-          <Box v-show="store.boxOpenState" />
+          <MainRight />
+          <!-- 原时光胶囊信息面板代码保留于 src/views/Box，暂不挂载。 -->
         </section>
         <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
           <MoreSet />
@@ -43,7 +43,6 @@ import MainLeft from "@/views/Main/Left.vue";
 import MainRight from "@/views/Main/Right.vue";
 import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
-import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 
