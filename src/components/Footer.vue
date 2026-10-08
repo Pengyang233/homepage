@@ -11,11 +11,11 @@
         {{ fullYear }}
         <a :href="siteUrl">{{ siteAuthor }}</a>
       </span>
-      <!-- 以下信息请不要修改哦 -->
+      <!-- 原开源项目致谢 -->
       <span class="hidden">
         &amp;&nbsp;Made&nbsp;by
-        <a :href="config.github" target="_blank">
-          {{ config.author }}
+        <a :href="upstreamUrl" target="_blank">
+          imsyy
         </a>
       </span>
       <!-- 站点备案 -->
@@ -31,7 +31,7 @@
 
 <script setup>
 import { mainStore } from "@/store";
-import config from "@/../package.json";
+const upstreamUrl = "https://github.com/imsyy/home";
 
 const store = mainStore();
 const fullYear = new Date().getFullYear();
