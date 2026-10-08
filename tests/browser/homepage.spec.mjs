@@ -44,7 +44,7 @@ test("wallpaper remains fixed despite legacy browser settings", async ({ page })
   await page.goto("/");
   await expect(page.locator("#main")).toBeVisible({ timeout: 10_000 });
   await expect(page.locator(".cover .bg")).toHaveAttribute("src", "/images/background1.jpg");
-  await expect(page.locator("footer#footer")).toHaveClass(/blur/);
+  await expect(page.locator("footer#footer")).toHaveCount(0);
 });
 
 test("the public page does not expose global settings", async ({ page }) => {
