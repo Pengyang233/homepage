@@ -20,6 +20,7 @@ onBeforeUnmount(() => clearInterval(intervalId));
 
 <style scoped lang="scss">
 .function {
+  position: relative; z-index: 5; // Weather popover must sit above the search card.
   display: flex; gap: 25px; align-items: center; padding: 25px 30px; min-height: 125px;
   background: rgb(13 22 34 / 28%);
   .time { font-size: clamp(2.5rem, 4.4vw, 4.2rem); font-weight: 300; letter-spacing: -.035em; font-variant-numeric: tabular-nums; line-height: 1; }
