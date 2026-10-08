@@ -16,7 +16,7 @@ const store = mainStore();
 .left {
   width: 40%;
   min-width: 0;
-  height: min(525px, calc(100dvh - 130px));
+  height: min(565px, calc(100dvh - 130px));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,7 +32,7 @@ const store = mainStore();
   }
 
   @media (max-height: 720px) and (min-width: 721px) {
-    height: 525px;
+    height: 565px;
   }
 
   &.hidden { display: none; }

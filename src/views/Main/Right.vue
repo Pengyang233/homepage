@@ -27,7 +27,7 @@ const siteDisplayName = "perrin";
 .right {
   width: 60%;
   min-width: 0;
-  height: min(525px, calc(100dvh - 130px));
+  height: min(565px, calc(100dvh - 130px));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -48,5 +48,6 @@ const siteDisplayName = "perrin";
     &.hidden { display: none; }
   }
   @media (max-height: 740px) and (min-width: 721px) { gap: 12px; }
+  @media (max-height: 720px) and (min-width: 721px) { height: 565px; }
 }
 </style>
