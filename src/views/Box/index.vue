@@ -1,22 +1,30 @@
 <template>
-  <div class="box cards" @mouseenter="closeShow = true" @mouseleave="closeShow = false">
+  <div class="box cards">
     <transition name="el-fade-in-linear">
       <close-one
         class="close"
+        role="button"
+        tabindex="0"
+        aria-label="关闭信息面板"
+        @keydown.enter="store.boxOpenState = false"
+        @keydown.space.prevent="store.boxOpenState = false"
         theme="filled"
         size="28"
         fill="#ffffff60"
-        v-show="closeShow"
         @click="store.boxOpenState = false"
       />
     </transition>
     <transition name="el-fade-in-linear">
       <setting-two
         class="setting"
+        role="button"
+        tabindex="0"
+        aria-label="打开设置"
+        @keydown.enter="store.setOpenState = true"
+        @keydown.space.prevent="store.setOpenState = true"
         theme="filled"
         size="28"
         fill="#ffffff60"
-        v-show="closeShow"
         @click="store.setOpenState = true"
       />
     </transition>
@@ -35,7 +43,6 @@ import TimeCapsule from "@/components/TimeCapsule.vue";
 import MoreContent from "@/components/MoreContent.vue";
 
 const store = mainStore();
-const closeShow = ref(false);
 </script>
 
 <style lang="scss" scoped>
@@ -54,6 +61,8 @@ const closeShow = ref(false);
   .close,
   .setting {
     position: absolute;
+    cursor: pointer;
+    z-index: 2;
     top: 14px;
     right: 14px;
     width: 28px;
