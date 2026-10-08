@@ -145,3 +145,35 @@ test("stacked identity remains accessible on narrow screens", async ({ page }) =
     }
   }
 });
+
+test("large screens use readable weights and recognizable monochrome site icons", async ({ page }) => {
+  for (const width of [1280, 1920, 2560]) {
+    await page.setViewportSize({ width, height: 1080 });
+    await page.goto("/");
+    await expect(page.locator("#main")).toBeVisible();
+    const styles = await page.evaluate(() => {
+      const time = document.querySelector(".function .time");
+      const title = document.querySelector(".links-header h2");
+      const label = document.querySelector(".links-grid .link-name");
+      const signature = document.querySelector(".message .name");
+      const brandIcon = [...document.querySelectorAll(".links-grid a")]
+        .find(link => link.textContent.trim() === "ChatGPT")?.querySelector(".mono-icon");
+      return {
+        clockWeight: Number(getComputedStyle(time).fontWeight),
+        titleWeight: Number(getComputedStyle(title).fontWeight),
+        labelWeight: Number(getComputedStyle(label).fontWeight),
+        labelSize: parseFloat(getComputedStyle(label).fontSize),
+        signatureFont: getComputedStyle(signature).fontFamily,
+        brandFill: brandIcon?.getAttribute("fill"),
+        overflow: document.documentElement.scrollWidth > window.innerWidth,
+      };
+    });
+    expect(styles.clockWeight).toBeGreaterThanOrEqual(500);
+    expect(styles.titleWeight).toBeGreaterThanOrEqual(600);
+    expect(styles.labelWeight).toBeGreaterThanOrEqual(600);
+    expect(styles.labelSize).toBeGreaterThanOrEqual(14);
+    expect(styles.signatureFont).toContain("Pacifico-Regular");
+    expect(styles.brandFill).toBe("currentColor");
+    expect(styles.overflow).toBe(false);
+  }
+});
