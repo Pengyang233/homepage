@@ -177,3 +177,84 @@ test("large screens use readable weights and recognizable monochrome site icons"
     expect(styles.overflow).toBe(false);
   }
 });
+
+test("B2.2 clock keeps balanced hierarchy and fits small to large screens", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("perrin-weather-location-v1", JSON.stringify({
+      latitude: 30.27, longitude: 120.15, label: "杭州"
+    }));
+  });
+  await page.route("https://api.open-meteo.com/**", route => route.fulfill({
+    status: 200, contentType: "application/json",
+    body: JSON.stringify({ current: { temperature_2m: 22, weather_code: 2, is_day: 1 } })
+  }));
+
+  for (const width of [320, 390, 720, 721, 1280, 1920, 2560]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await expect(page.locator("#main")).toBeVisible({ timeout: 10_000 });
+    if (width <= 720) await page.locator(".menu").click();
+    await expect(page.locator(".function .time")).toBeVisible();
+    await expect(page.locator(".clock-caption")).toHaveCount(0);
+    await expect(page.locator(".weather-trigger")).toContainText("22°");
+
+    const metrics = await page.evaluate(() => {
+      const box = selector => {
+        const { x, y, width, height, right, bottom } = document.querySelector(selector).getBoundingClientRect();
+        return { x, y, width, height, right, bottom };
+      };
+      const style = selector => getComputedStyle(document.querySelector(selector));
+      const clock = box(".function .time");
+      const date = box(".function .date");
+      const temperature = box(".weather-trigger .temperature");
+      const card = box(".function");
+      const weather = box(".weather-panel");
+      const clockPanel = box(".clock-panel");
+      return {
+        clock, date, temperature, card, weather, clockPanel,
+        clockSize: parseFloat(style(".function .time").fontSize),
+        dateSize: parseFloat(style(".function .date").fontSize),
+        tempSize: parseFloat(style(".weather-trigger .temperature").fontSize),
+        clockWeight: Number(style(".function .time").fontWeight),
+        dateWeight: Number(style(".function .date").fontWeight),
+        tempWeight: Number(style(".weather-trigger .temperature").fontWeight),
+        weatherGlass: style(".weather-panel").backgroundImage.includes("radial-gradient"),
+        overflow: document.documentElement.scrollWidth > window.innerWidth,
+      };
+    });
+    expect(metrics.clockSize).toBeGreaterThan(metrics.tempSize);
+    expect(metrics.tempSize).toBeGreaterThan(metrics.dateSize);
+    expect(metrics.clockWeight).toBeGreaterThanOrEqual(600);
+    expect(metrics.tempWeight).toBeGreaterThanOrEqual(600);
+    expect(metrics.dateWeight).toBeGreaterThanOrEqual(500);
+    expect(metrics.weatherGlass).toBe(true);
+    expect(metrics.card.height).toBeGreaterThanOrEqual(139);
+    // 两行文字在左侧区域共用中心线，组合也应垂直居中。
+    const centerX = rect => rect.x + rect.width / 2;
+    const panelCenterX = centerX(metrics.clockPanel);
+    const panelCenterY = metrics.clockPanel.y + metrics.clockPanel.height / 2;
+    const groupCenterY = (metrics.clock.y + metrics.date.bottom) / 2;
+    expect(Math.abs(centerX(metrics.clock) - panelCenterX)).toBeLessThan(2);
+    expect(Math.abs(centerX(metrics.date) - panelCenterX)).toBeLessThan(2);
+    expect(Math.abs(groupCenterY - panelCenterY)).toBeLessThan(3);
+    expect(metrics.clock.x).toBeGreaterThanOrEqual(metrics.card.x);
+    expect(metrics.clock.right).toBeLessThanOrEqual(metrics.weather.x + 1);
+    expect(metrics.date.right).toBeLessThanOrEqual(metrics.weather.x + 1);
+    expect(metrics.weather.right).toBeLessThanOrEqual(metrics.card.right + 1);
+    expect(metrics.overflow).toBe(false);
+  }
+});
+
+test("B2.2 weather city picker remains usable without being clipped", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.goto("/");
+  await expect(page.locator("#main")).toBeVisible();
+  await page.locator(".menu").click();
+  await page.locator(".weather-trigger").click();
+  const picker = page.locator(".city-picker");
+  await expect(picker).toBeVisible();
+  const box = await picker.boundingBox();
+  expect(box.x).toBeGreaterThanOrEqual(-1);
+  expect(box.x + box.width).toBeLessThanOrEqual(321);
+  await expect(page.getByRole("textbox", { name: "天气城市（不会自动获取位置）" })).toBeVisible();
+});
