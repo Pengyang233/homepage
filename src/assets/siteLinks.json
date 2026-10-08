@@ -12,21 +12,21 @@
   {
     "name": "ChatGPT",
     "link": "https://chatgpt.com/",
-    "icon": "bot"
+    "icon": "chatgpt"
   },
   {
     "name": "Cloudflare",
     "link": "https://dash.cloudflare.com/",
-    "icon": "cloud"
+    "icon": "cloudflare"
   },
   {
     "name": "Google",
     "link": "https://www.google.com/",
-    "icon": "search"
+    "icon": "google"
   },
   {
     "name": "Bilibili",
     "link": "https://www.bilibili.com/",
-    "icon": "play"
+    "icon": "bilibili"
   }
 ]
