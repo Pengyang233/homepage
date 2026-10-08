@@ -49,6 +49,11 @@ import cursorInit from "@/utils/cursor.js";
 
 const store = mainStore();
 
+const handleMiddleClick = (event) => {
+  if (event.button !== 1 || event.target.closest("a, button, input, textarea, select, [role=button]")) return;
+  store.backgroundShow = !store.backgroundShow;
+};
+
 // 页面宽度
 const getWidth = () => {
   store.setInnerWidth(window.innerWidth);
@@ -79,26 +84,8 @@ onMounted(() => {
   // 自定义鼠标
   cursorInit();
 
-  // 屏蔽右键
-  document.oncontextmenu = () => {
-    ElMessage({
-      message: "为了浏览体验，本站禁用右键",
-      grouping: true,
-      duration: 2000,
-    });
-    return false;
-  };
-
-  // 鼠标中键事件
-  window.addEventListener("mousedown", (event) => {
-    if (event.button == 1) {
-      store.backgroundShow = !store.backgroundShow;
-      ElMessage({
-        message: `已${store.backgroundShow ? "开启" : "退出"}壁纸展示状态`,
-        grouping: true,
-      });
-    }
-  });
+  // 鼠标中键仅在页面非交互区域切换壁纸
+  window.addEventListener("mousedown", handleMiddleClick);
 
   // 监听当前页面宽度
   getWidth();
@@ -113,6 +100,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", getWidth);
+  window.removeEventListener("mousedown", handleMiddleClick);
 });
 </script>
 
@@ -226,19 +214,10 @@ onBeforeUnmount(() => {
     }
   }
   @media (max-width: 390px) {
-    overflow-x: auto;
-    .container {
-      width: 391px;
-    }
-    .menu {
-      left: 167.5px; // 391px * 0.5 - 28px
-    }
-    .f-ter {
-      width: 391px;
-    }
-    @media (min-height: 721px) {
-      overflow-y: hidden;
-    }
+    overflow-x: hidden;
+    .container { width: 100%; }
+    .menu { left: calc(50% - 28px); }
+    .f-ter { width: 100%; }
   }
 }
 </style>
