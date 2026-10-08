@@ -1,9 +1,9 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
-    <img :key="requestId" :src="bgUrl" class="bg" alt="" @load="imgLoadComplete" @error="imgLoadError" />
+    <img v-for="entry in [image]" :key="entry.id" :src="entry.url" class="bg" alt="" @load="handleLoad(entry.id)" @error="handleError(entry.id)" />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
-      <a v-if="store.backgroundShow && store.coverType != '3'" class="down" :href="bgUrl" target="_blank" rel="noopener noreferrer">下载壁纸</a>
+      <a v-if="store.backgroundShow && store.coverType != '3'" class="down" :href="image.url" target="_blank" rel="noopener noreferrer">下载壁纸</a>
     </Transition>
   </div>
 </template>
@@ -13,17 +13,40 @@ import { mainStore } from "@/store";
 
 const store = mainStore();
 const fallbackUrl = `/images/background${Math.floor(Math.random() * 10 + 1)}.jpg`;
-const bgUrl = ref(fallbackUrl);
+const image = ref({ id: 0, url: fallbackUrl });
 const watchdog = ref(null);
-const loaded = ref(false);
-const requestId = ref(0);
+let firstReady = false;
 const emit = defineEmits(["loadComplete"]);
 
-const finishLoading = () => {
-  if (loaded.value) return;
-  loaded.value = true;
+const finishFirstLoad = () => {
+  if (firstReady) return;
+  firstReady = true;
   store.setImgLoadStatus(true);
   emit("loadComplete");
+};
+
+const setImage = (url) => {
+  image.value = { id: image.value.id + 1, url };
+  clearTimeout(watchdog.value);
+  const id = image.value.id;
+  watchdog.value = setTimeout(() => {
+    if (image.value.id !== id) return;
+    if (image.value.url !== fallbackUrl) setImage(fallbackUrl);
+    else finishFirstLoad();
+  }, 3500);
+};
+
+const handleLoad = (id) => {
+  if (id !== image.value.id) return;
+  clearTimeout(watchdog.value);
+  finishFirstLoad();
+};
+
+const handleError = (id) => {
+  if (id !== image.value.id) return;
+  clearTimeout(watchdog.value);
+  if (image.value.url !== fallbackUrl) setImage(fallbackUrl);
+  else finishFirstLoad();
 };
 
 const changeBg = (type) => {
@@ -32,35 +55,8 @@ const changeBg = (type) => {
     "2": "https://api.vvhan.com/api/wallpaper/views",
     "3": "https://api.vvhan.com/api/wallpaper/acg",
   };
-  requestId.value += 1;
-  bgUrl.value = external[type] || fallbackUrl;
-  if (!loaded.value) startWatchdog();
+  setImage(external[type] || fallbackUrl);
 };
-
-const imgLoadComplete = () => {
-  clearTimeout(watchdog.value);
-  finishLoading();
-};
-
-const imgLoadError = () => {
-  clearTimeout(watchdog.value);
-  if (bgUrl.value !== fallbackUrl) {
-    requestId.value += 1;
-    bgUrl.value = fallbackUrl;
-  }
-  finishLoading();
-};
-
-function startWatchdog() {
-  clearTimeout(watchdog.value);
-  watchdog.value = setTimeout(() => {
-    if (bgUrl.value !== fallbackUrl) {
-      requestId.value += 1;
-      bgUrl.value = fallbackUrl;
-    }
-    finishLoading();
-  }, 3500);
-}
 
 watch(() => store.coverType, changeBg);
 onMounted(() => changeBg(store.coverType));

@@ -25,19 +25,15 @@ export default ({ mode }) =>
         workbox: {
           skipWaiting: true,
           clientsClaim: true,
+          // VitePWA precaches versioned build assets; avoid CacheFirst for generic JS/CSS URLs.
           runtimeCaching: [
             {
-              urlPattern: /(.*?)\.(js|css|woff2|woff|ttf)/, // js / css 静态资源缓存
-              handler: "CacheFirst",
+              urlPattern: /\.(?:png|jpe?g|svg|gif|webp)$/i,
+              handler: "StaleWhileRevalidate",
               options: {
-                cacheName: "js-css-cache",
-              },
-            },
-            {
-              urlPattern: /(.*?)\.(png|jpe?g|svg|gif|bmp|psd|tiff|tga|eps)/, // 图片缓存
-              handler: "CacheFirst",
-              options: {
-                cacheName: "image-cache",
+                cacheName: "image-cache-v2",
+                expiration: { maxEntries: 40, maxAgeSeconds: 7 * 24 * 60 * 60 },
+                cacheableResponse: { statuses: [0, 200] },
               },
             },
           ],
