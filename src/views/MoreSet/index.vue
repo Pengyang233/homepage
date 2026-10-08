@@ -60,7 +60,7 @@ const store = mainStore();
 const closeShow = ref(false);
 
 // 艺术字名称独立于站点地址
-const siteDisplayName = "Perrin";
+const siteDisplayName = "perrin";
 
 // 更新日志
 const upData = reactive({

@@ -38,7 +38,7 @@ const store = mainStore();
 // 主页站点logo
 const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
 // 艺术字名称独立于站点地址
-const siteDisplayName = "Perrin";
+const siteDisplayName = "perrin";
 
 // 简介区域文字
 const descriptionText = reactive({

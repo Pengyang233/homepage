@@ -18,7 +18,7 @@ import Link from "@/components/Links.vue";
 const store = mainStore();
 
 // 艺术字名称独立于站点地址
-const siteDisplayName = "Perrin";
+const siteDisplayName = "perrin";
 </script>
 
 <style lang="scss" scoped>
