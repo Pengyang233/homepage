@@ -29,8 +29,9 @@
       />
     </transition>
     <div class="content">
-      <!-- 可在此处自定义任意内容 -->
-      <TimeCapsule />
+      <!-- 暂时隐藏时光胶囊，设为 true 可直接恢复，原组件及逻辑保持不变。 -->
+      <TimeCapsule v-if="showTimeCapsule" />
+      <Hitokoto v-else />
     </div>
   </div>
 </template>
@@ -39,8 +40,10 @@
 import { CloseOne, SettingTwo } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import TimeCapsule from "@/components/TimeCapsule.vue";
+import Hitokoto from "@/components/Hitokoto.vue";
 
 const store = mainStore();
+const showTimeCapsule = false;
 </script>
 
 <style lang="scss" scoped>
