@@ -79,105 +79,107 @@ watch(
 
 <style lang="scss" scoped>
 .message {
+  width: 100%;
+  max-width: 460px;
+  min-width: 0;
+
+  // 让原版头像与 Pacifico 连体签名形成上下主视觉。
   .logo {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     animation: fade 0.5s;
-    max-width: 460px;
+
     .logo-img {
+      display: block;
+      width: clamp(140px, 12.5vw, 170px);
+      height: auto;
+      aspect-ratio: 1;
+      object-fit: cover;
       border-radius: 50%;
-      width: 112px;
     }
+
     .name {
       width: 100%;
-      padding-left: 22px;
-      transform: translateY(-8px);
+      min-width: 0;
+      padding: 0 0 8px 2px;
+      line-height: 1.45;
       font-family: "Pacifico-Regular";
-
       .bg {
-        font-size: 5rem;
+        display: block;
+        font-size: clamp(3.4rem, 6vw, 5rem);
+        line-height: 1.45;
       }
-
-      .sm {
-        margin-left: 6px;
-        font-size: 2rem;
-        @media (min-width: 721px) and (max-width: 789px) {
-          display: none;
-        }
-      }
-    }
-    @media (max-width: 768px) {
-      .logo-img {
-        width: 100px;
-      }
-      .name {
-        height: 128px;
-        .bg {
-          font-size: 4.5rem;
-        }
-      }
-    }
-
-    @media (max-width: 720px) {
-      max-width: 100%;
     }
   }
 
+  // 保留原签名卡片的展开互动，与字标维持相同的左边界。
   .description {
-    padding: 1rem;
-    margin-top: 1.75rem;
-    max-width: 460px;
+    width: 100%;
+    max-width: 425px;
+    margin-top: 10px;
+    padding: 13px 16px;
     animation: fade 0.5s;
 
     .content {
       display: flex;
       justify-content: space-between;
+      gap: 10px;
 
       .text {
-        margin: 0.75rem 1rem;
-        line-height: 2rem;
-        margin-right: auto;
+        min-width: 0;
+        margin: 6px 0;
+        line-height: 1.75rem;
         transition: opacity 0.2s;
 
+        p:first-of-type {
+          font-family: "Pacifico-Regular";
+        }
         p {
-          &:nth-of-type(1) {
-            font-family: "Pacifico-Regular";
-          }
+          overflow-wrap: anywhere;
         }
       }
 
-      .xicon:nth-of-type(2) {
-        align-self: flex-end;
+      .xicon {
+        flex: none;
+        &:last-of-type {
+          align-self: flex-end;
+        }
       }
     }
-    @media (max-width: 720px) {
-      max-width: 100%;
+  }
+
+  @media (max-width: 720px) {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .logo {
+      align-items: center;
+      gap: 4px;
+      .logo-img {
+        width: clamp(120px, 35vw, 148px);
+      }
+      .name {
+        padding: 0 0 5px;
+        .bg {
+          font-size: clamp(3.1rem, 12vw, 4.4rem);
+        }
+      }
+    }
+
+    .description {
+      max-width: 420px;
+      margin-top: 8px;
+      padding: 10px 14px;
       pointer-events: none;
+      .content .text {
+        flex: 1;
+      }
     }
   }
-  // @media (max-width: 390px) {
-  //   .logo {
-  //     flex-direction: column;
-  //     .logo-img {
-  //       display: none;
-  //     }
-  //     .name {
-  //       margin-left: 0;
-  //       height: auto;
-  //       transform: none;
-  //       text-align: center;
-  //       .bg {
-  //         font-size: 3.5rem;
-  //       }
-  //       .sm {
-  //         font-size: 1.4rem;
-  //       }
-  //     }
-  //   }
-  //   .description {
-  //     margin-top: 2.5rem;
-  //   }
-  // }
 }
 </style>

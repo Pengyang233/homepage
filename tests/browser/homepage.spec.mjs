@@ -87,3 +87,39 @@ test("weather asks for city and renders a mocked forecast", async ({ page }) => 
   await expect(page.locator(".weather-trigger")).toContainText("22°");
   await expect(page.locator(".weather-trigger")).toContainText("杭州");
 });
+
+test("avatar and original handwritten perrin wordmark stack vertically", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#main")).toBeVisible();
+  const avatar = page.locator(".message .logo-img");
+  const name = page.locator(".message .name .bg");
+  const signature = page.locator(".message .description");
+  const contact = page.locator(".left .social");
+  await expect(avatar).toBeVisible();
+  await expect(name).toHaveText("perrin");
+  const imageBox = await avatar.boundingBox();
+  const nameBox = await name.boundingBox();
+  const signatureBox = await signature.boundingBox();
+  const contactBox = await contact.boundingBox();
+  expect(imageBox.width).toBeGreaterThanOrEqual(150);
+  expect(nameBox.y).toBeGreaterThan(imageBox.y + imageBox.height - 1);
+  expect(signatureBox.y).toBeGreaterThan(nameBox.y + nameBox.height - 1);
+  expect(contactBox.y).toBeGreaterThan(signatureBox.y + signatureBox.height - 1);
+  expect(await name.evaluate(el => getComputedStyle(el.parentElement).fontFamily)).toContain("Pacifico-Regular");
+});
+
+test("stacked identity remains accessible on narrow screens", async ({ page }) => {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 760 });
+    await page.goto("/");
+    await expect(page.locator("#main")).toBeVisible();
+    const avatar = await page.locator(".message .logo-img").boundingBox();
+    const name = await page.locator(".message .name .bg").boundingBox();
+    const signature = await page.locator(".message .description").boundingBox();
+    expect(name.y).toBeGreaterThan(avatar.y + avatar.height - 1);
+    expect(signature.y).toBeGreaterThan(name.y + name.height - 1);
+    expect(avatar.x).toBeGreaterThanOrEqual(0);
+    expect(avatar.x + avatar.width).toBeLessThanOrEqual(width);
+  }
+});
