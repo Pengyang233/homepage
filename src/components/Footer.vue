@@ -63,6 +63,7 @@ const siteUrl = computed(() => {
   text-align: center;
   z-index: 0;
   font-size: 14px;
+  font-weight: 500;
   // 文字不换行
   word-break: keep-all;
   white-space: nowrap;
