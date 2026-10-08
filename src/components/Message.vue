@@ -38,6 +38,8 @@ const siteDisplayName = "perrin";
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 1.8vw, 20px);
 
   // 头像与 Pacifico 连体签名保持原有上下结构。
   .logo {
@@ -76,18 +78,20 @@ const siteDisplayName = "perrin";
   .description {
     width: 100%;
     max-width: 425px;
-    margin: 10px auto 0;
+    margin: 0 auto;
     padding: 12px 14px;
     animation: fade 0.5s;
 
     .content {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      min-height: 76px;
+      align-items: center;
       gap: 10px;
 
       .xicon {
         flex: none;
+        &:first-of-type { align-self: flex-start; }
         &:last-of-type {
           align-self: flex-end;
         }
@@ -99,6 +103,7 @@ const siteDisplayName = "perrin";
     max-width: 100%;
     align-items: center;
     text-align: center;
+    gap: 14px;
 
     .logo {
       align-items: center;
@@ -112,7 +117,7 @@ const siteDisplayName = "perrin";
 
     .description {
       max-width: 420px;
-      margin-top: 8px;
+      margin-top: 0;
       padding: 10px 12px;
     }
   }
