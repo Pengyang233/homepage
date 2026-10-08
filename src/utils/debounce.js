@@ -1,23 +1,16 @@
-// 防抖
-let timeout;
-
-function debounce(func, wait = 300, immediate = false) {
-  // 清除定时器
-  if (timeout !== null) {
-    clearTimeout(timeout);
-  }
-  // 立即执行
-  if (immediate) {
-    var callNow = !timeout;
-    timeout = setTimeout(function () {
-      timeout = null;
+// 每个调用者持有独立定时器，并可在卸载时取消待执行任务。
+export default function debounce(fn, wait = 300) {
+  let timer = null;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      fn(...args);
     }, wait);
-    if (callNow) typeof func === "function" && func();
-  } else {
-    timeout = setTimeout(function () {
-      typeof func === "function" && func();
-    }, wait);
-  }
+  };
+  wrapped.cancel = () => {
+    clearTimeout(timer);
+    timer = null;
+  };
+  return wrapped;
 }
-
-export default debounce;

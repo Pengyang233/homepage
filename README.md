@@ -48,6 +48,26 @@ npm run preview
 
 使用 320、375、390、720 和 1280px 等视口检查是否有横向滚动；尝试右键菜单、键盘 Tab 访问导航、点击外部链接；在浏览器开发者工具中模拟离线/慢网络，确认壁纸、一言失败时主页仍显示。
 
+
+## 浏览器冒烟测试
+
+`tests/browser/homepage.spec.mjs` 覆盖窄屏横向滚动、博客链接、第三方资源失败降级，以及 Esc 关闭设置。PR 会运行独立的 **Browser Smoke** GitHub Actions 工作流（Chromium），失败时上传 trace / 测试报告。
+
+本地复现：
+
+```bash
+npm ci
+npm install --no-save --package-lock=false @playwright/test@1.56.1
+npx playwright install chromium
+npx playwright test --config=playwright.config.mjs
+```
+
+`npm test` 运行时间胶囊及防抖单元测试；`npm run lint:check` 和 `npm run build` 验证代码质量与构建。
+
+## 依赖审查记录
+
+检查当前 `src/` 和 `vite.config.js` 的直接引用后，`axios` 与 `lodash-es` **未发现直接使用**。暂不直接修改依赖及锁文件，以免在没有完成完整 npm 安装与构建验证时产生锁文件不一致；待确认构建检查通过后，可用 `npm uninstall axios lodash-es` 同步更新 `package.json` 和 `package-lock.json`。
+
 ## 致谢
 
 本站基于 [imsyy/home](https://github.com/imsyy/home) 二次开发。感谢原作者 imsyy 开源原项目；保留原始许可证及版权信息。

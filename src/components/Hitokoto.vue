@@ -33,16 +33,10 @@ const getHitokotoData = async () => {
 };
 
 // 更新一言数据
-const updateHitokoto = () => {
-  // 防抖
-  debounce(() => {
-    getHitokotoData();
-  }, 500);
-};
+const updateHitokoto = debounce(getHitokotoData, 500);
 
-onMounted(() => {
-  getHitokotoData();
-});
+onMounted(getHitokotoData);
+onBeforeUnmount(() => updateHitokoto.cancel());
 </script>
 
 <style lang="scss" scoped>
