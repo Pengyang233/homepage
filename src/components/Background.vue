@@ -1,6 +1,6 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
-    <img :key="image.id" :src="image.url" class="bg" alt="" @load="handleLoad(image.id)" @error="handleError(image.id)" />
+    <img v-for="entry in [image]" :key="entry.id" :src="entry.url" class="bg" alt="" @load="handleLoad(entry.id)" @error="handleError(entry.id)" />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow && store.coverType != '3'" class="down" :href="image.url" target="_blank" rel="noopener noreferrer">下载壁纸</a>
