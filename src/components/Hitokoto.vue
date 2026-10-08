@@ -35,7 +35,7 @@ onBeforeUnmount(() => {
 
 .quote-text {
   margin: 0;
-  font-size: clamp(14px, 0.83vw, 16px);
+  font-size: clamp(15px, 0.85vw, 17px);
   font-weight: 550;
   line-height: 1.65;
   text-align: center;
@@ -44,15 +44,15 @@ onBeforeUnmount(() => {
   text-wrap: pretty;
 
   &.long-quote {
-    font-size: clamp(13px, 0.79vw, 15px);
+    font-size: clamp(14px, 0.8vw, 15.5px);
     line-height: 1.6;
   }
 }
 
 @media (max-width: 720px) {
   .quote-text {
-    font-size: 14px;
-    &.long-quote { font-size: 13px; }
+    font-size: 15px;
+    &.long-quote { font-size: 14px; }
   }
 }
 </style>
