@@ -87,7 +87,7 @@ watch(
     max-width: 460px;
     .logo-img {
       border-radius: 50%;
-      width: 120px;
+      width: 112px;
     }
     .name {
       width: 100%;
@@ -126,7 +126,7 @@ watch(
 
   .description {
     padding: 1rem;
-    margin-top: 3.5rem;
+    margin-top: 1.75rem;
     max-width: 460px;
     animation: fade 0.5s;
 

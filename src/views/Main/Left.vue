@@ -14,16 +14,21 @@ const store = mainStore();
 
 <style lang="scss" scoped>
 .left {
-  // flex: 1 0 0%;
-  width: 50%;
-  margin-right: 10px;
-  transform: translateY(20px);
-  &.hidden {
-    display: none;
-  }
+  width: 40%;
+  min-width: 0;
+  height: min(525px, calc(100dvh - 130px));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  &.hidden { display: none; }
   @media (max-width: 720px) {
-    margin-right: 0;
     width: 100%;
+    height: auto;
+    min-height: 320px;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
   }
 }
 </style>

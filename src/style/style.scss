@@ -20,7 +20,7 @@ body {
   background-color: #333;
   overflow: hidden;
   overflow-x: clip;
-  font-family: "HarmonyOS_Regular", sans-serif;
+  font-family: "HarmonyOS Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 *,
@@ -49,10 +49,7 @@ p {
 }
 
 // 链接悬停效果
-a:hover {
-  color: rgb(57, 159, 255);
-  text-decoration: underline;
-}
+a:hover { color: #fff; }
 
 // 字体文件
 @font-face {
@@ -78,21 +75,14 @@ a:hover {
   z-index: 0;
 }
 
-// 卡片样式
+// 低存在感的半透明卡片，让壁纸仍可见
 .cards {
-  border-radius: 6px;
-  background-color: #00000040;
-  backdrop-filter: blur(10px);
-  transform: scale(1);
-  transition:
-    backdrop-filter 0.3s,
-    transform 0.3s;
-  &:hover {
-    transform: scale(1.01);
-  }
-  &:active {
-    transform: scale(0.98);
-  }
+  border-radius: 16px;
+  border: 1px solid rgb(255 255 255 / 14%);
+  background: rgb(16 25 38 / 30%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 36px rgb(0 0 0 / 10%);
 }
 
 // 文字超出
