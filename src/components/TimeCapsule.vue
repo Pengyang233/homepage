@@ -62,6 +62,7 @@ onBeforeUnmount(() => {
     align-items: center;
     margin: 0.2rem 0 1.5rem;
     font-size: 1.1rem;
+    font-weight: 650;
     .i-icon {
       display: flex;
       justify-content: center;
@@ -79,8 +80,9 @@ onBeforeUnmount(() => {
         justify-content: space-between;
         margin: 1rem 0rem 0.5rem 0rem;
         font-size: 0.95rem;
+        font-weight: 500;
         .remaining {
-          opacity: 0.6;
+          opacity: 0.82;
           font-size: 0.85rem;
           font-style: oblique;
         }
