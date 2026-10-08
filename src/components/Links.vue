@@ -1,172 +1,74 @@
 <template>
-  <div v-if="siteLinks[0]" class="links">
-    <div class="line">
-      <Icon size="20">
-        <Link />
-      </Icon>
-      <span class="title">网站列表</span>
+  <section class="links cards" aria-label="常用网址">
+    <div class="links-header">
+      <h2>常用网址</h2>
+      <button type="button" aria-label="管理常用网址" @click="editing = true">
+        <MonoIcon name="edit" /><span>管理</span>
+      </button>
     </div>
-    <!-- 网站列表 -->
-    <Swiper
-      v-if="siteLinks[0]"
-      :modules="[Pagination, Mousewheel]"
-      :slides-per-view="1"
-      :space-between="40"
-      :pagination="{
-        el: '.swiper-pagination',
-        clickable: true,
-        bulletElement: 'div',
-      }"
-      :mousewheel="true"
-    >
-      <SwiperSlide v-for="site in siteLinksList" :key="site">
-        <el-row class="link-all" :gutter="20">
-          <el-col v-for="(item, index) in site" :span="8" :key="item">
-            <a
-              class="item cards"
-              :href="item.link"
-              target="_blank"
-              rel="noopener noreferrer"
-              :style="index < 3 ? 'margin-bottom: 20px' : null"
-            >
-              <Icon size="26">
-                <component :is="siteIcon[item.icon]" />
-              </Icon>
-              <span class="name text-hidden">{{ item.name }}</span>
-            </a>
-          </el-col>
-        </el-row>
-      </SwiperSlide>
-      <div class="swiper-pagination" />
-    </Swiper>
-  </div>
+    <div v-if="links.length" class="links-grid">
+      <a v-for="item in links" :key="item.link + item.name" :href="item.link"
+        target="_blank" rel="noopener noreferrer" :title="item.name">
+        <span class="icon-frame"><MonoIcon :name="item.icon" /></span>
+        <span class="link-name">{{ item.name }}</span>
+      </a>
+    </div>
+    <p v-else class="empty">还没有常用网址，点击「管理」添加。</p>
+    <BookmarkEditor v-if="editing" :items="links" :defaults="defaults" @close="editing = false" @save="save" />
+  </section>
 </template>
 
 <script setup>
-import { Icon } from "@vicons/utils";
-// 可前往 https://www.xicons.org 自行挑选并在此处引入
-import { Link, Blog, CompactDisc, Cloud, Compass, Book, Fire, LaptopCode } from "@vicons/fa"; // 注意使用正确的类别
-import { Swiper, SwiperSlide } from "swiper/vue";
-import { Pagination, Mousewheel } from "swiper/modules";
-import siteLinks from "@/assets/siteLinks.json";
+import MonoIcon from "@/components/MonoIcon.vue";
+import BookmarkEditor from "@/components/BookmarkEditor.vue";
+import initialLinks from "@/assets/siteLinks.json";
+import { loadBookmarks, saveBookmarks, normalizeBookmark } from "@/utils/bookmarks.js";
 
-// 计算网站链接
-const siteLinksList = computed(() => {
-  const result = [];
-  for (let i = 0; i < siteLinks.length; i += 6) {
-    const subArr = siteLinks.slice(i, i + 6);
-    result.push(subArr);
-  }
-  return result;
-});
-
-// 网站链接图标
-const siteIcon = {
-  Blog,
-  Cloud,
-  CompactDisc,
-  Compass,
-  Book,
-  Fire,
-  LaptopCode,
+const defaults = initialLinks.map(normalizeBookmark).filter(Boolean);
+const links = ref(defaults);
+const editing = ref(false);
+const save = (items) => {
+  links.value = saveBookmarks(window.localStorage, items);
+  editing.value = false;
 };
-
-
+onMounted(() => { links.value = loadBookmarks(window.localStorage, defaults); });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .links {
-  .line {
-    margin: 2rem 0.25rem 1rem;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    animation: fade 0.5s;
-    .title {
-      margin-left: 8px;
-      font-size: 1.15rem;
-      text-shadow: 0 0 5px #00000050;
+  padding: 23px 25px 24px;
+  min-height: 250px;
+  background: rgb(13 22 34 / 33%);
+  .links-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;
+    h2 { font-size: 16px; font-weight: 500; letter-spacing: .04em; }
+    button {
+      display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #dce5f0;
+      padding: 5px 3px; cursor: pointer; font-size: 12px; opacity: .78;
+      .mono-icon { width: 15px; height: 15px; }
+      &:hover { opacity: 1; }
+      &:focus-visible { outline: 2px solid #fff; }
     }
   }
-  .swiper {
-    left: -10px;
-    width: calc(100% + 20px);
-    padding: 5px 10px 0;
-    z-index: 0;
-    .swiper-slide {
-      height: 100%;
+  .links-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 17px 12px; }
+  .links-grid a {
+    min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    text-decoration: none; border-radius: 10px; padding: 4px 2px 7px;
+    &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    &:hover .icon-frame { background: rgb(255 255 255 / 21%); transform: translateY(-3px); }
+    .icon-frame {
+      width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px;
+      border: 1px solid rgb(255 255 255 / 13%); background: rgb(255 255 255 / 9%);
+      transition: background .2s,transform .2s;
+      .mono-icon { width: 26px; height: 26px; }
     }
-    .swiper-pagination {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      :deep(.swiper-pagination-bullet) {
-        background-color: #fff;
-        width: 20px;
-        height: 4px;
-        margin: 0 4px;
-        border-radius: 4px;
-        opacity: 0.2;
-        transition: opacity 0.3s;
-        &.swiper-pagination-bullet-active {
-          opacity: 1;
-        }
-        &:hover {
-          opacity: 1;
-        }
-      }
-    }
+    .link-name { font-size: 12px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   }
-  .link-all {
-    height: 220px;
-    .item {
-      text-decoration: none;
-      &:focus-visible { outline: 2px solid white; outline-offset: 2px; }
-      height: 100px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      justify-content: center;
-      padding: 0 10px;
-      animation: fade 0.5s;
-
-      &:hover {
-        transform: scale(1.02);
-        background: rgb(0 0 0 / 40%);
-        transition: 0.3s;
-      }
-
-      &:active {
-        transform: scale(1);
-      }
-
-      .name {
-        font-size: 1.1rem;
-        margin-left: 8px;
-      }
-      @media (min-width: 720px) and (max-width: 820px) {
-        .name {
-          display: none;
-        }
-      }
-      @media (max-width: 720px) {
-        height: 80px;
-      }
-      @media (max-width: 460px) {
-        flex-direction: column;
-        .name {
-          font-size: 1rem;
-          margin-left: 0;
-          margin-top: 8px;
-        }
-      }
-    }
-    @media (max-width: 720px) {
-      height: 180px;
-    }
+  .empty { color: rgb(255 255 255 / 70%); font-size: 13px; margin-top: 30px; }
+  @media (max-width: 410px) {
+    padding: 18px 12px;
+    .links-grid { gap: 13px 4px; }
+    .links-grid a .icon-frame { width: 46px; height: 46px; }
   }
 }
 </style>
