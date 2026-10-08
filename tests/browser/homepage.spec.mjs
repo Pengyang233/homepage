@@ -275,3 +275,55 @@ test("B2.2 weather city picker remains usable without being clipped", async ({ p
   expect(box.x + box.width).toBeLessThanOrEqual(321);
   await expect(page.getByRole("textbox", { name: "天气城市（不会自动获取位置）" })).toBeVisible();
 });
+
+test("search bar has integrated focus styling, accessible engine picker and a balanced arrow icon", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const search = page.getByRole("textbox", { name: "搜索网页或输入网址" });
+  await search.click();
+  await search.fill("flow matching");
+  expect(await search.evaluate(el => getComputedStyle(el).outlineStyle)).toBe("none");
+  await expect(page.locator(".quick-search")).toHaveCSS("border-color", "rgba(255, 255, 255, 0.4)");
+
+  const icon = page.locator(".submit-button .mono-icon");
+  await expect(icon).toHaveAttribute("viewBox", "0 0 24 24");
+  expect(await icon.evaluate(el => Number.parseFloat(getComputedStyle(el).strokeWidth))).toBeGreaterThanOrEqual(2.7);
+
+  const trigger = page.getByRole("button", { name: "搜索引擎" });
+  await trigger.click();
+  const menu = page.getByRole("listbox", { name: "选择搜索引擎" });
+  await expect(menu).toBeVisible();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("option", { name: "Google" })).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("option", { name: "DuckDuckGo" }).click();
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toContainText("DuckDuckGo");
+  await expect(search).toHaveValue("flow matching");
+  await page.reload();
+  await expect(page.getByRole("button", { name: "搜索引擎" })).toContainText("DuckDuckGo");
+
+  await page.getByRole("button", { name: "搜索引擎" }).focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("listbox", { name: "选择搜索引擎" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("listbox", { name: "选择搜索引擎" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "搜索引擎" })).toBeFocused();
+});
+
+test("search engine menu fits narrow screens and dismisses on outside click", async ({ page }) => {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 760 });
+    await page.goto("/");
+    await page.locator(".menu").click();
+    const trigger = page.getByRole("button", { name: "搜索引擎" });
+    await trigger.click();
+    const menu = page.getByRole("listbox", { name: "选择搜索引擎" });
+    await expect(menu).toBeVisible();
+    const rect = await menu.boundingBox();
+    expect(rect.x).toBeGreaterThanOrEqual(-1);
+    expect(rect.x + rect.width).toBeLessThanOrEqual(width + 1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+    await page.getByRole("textbox", { name: "搜索网页或输入网址" }).click();
+    await expect(menu).toHaveCount(0);
+  }
+});
