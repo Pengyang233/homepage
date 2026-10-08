@@ -50,6 +50,12 @@ test("perrin identity remains prominent and desktop columns align", async ({ pag
   const right = await page.locator(".all > .right").boundingBox();
   expect(Math.abs(left.y - right.y)).toBeLessThan(5);
   expect(Math.abs(left.y + left.height - right.y - right.height)).toBeLessThan(5);
+  const brand = await page.locator(".left .message").boundingBox();
+  const clock = await page.locator(".right .function").boundingBox();
+  const contact = await page.locator(".left .social").boundingBox();
+  const bookmarks = await page.locator(".right .links").boundingBox();
+  expect(Math.abs(brand.y - clock.y)).toBeLessThan(5);
+  expect(Math.abs(contact.y + contact.height - bookmarks.y - bookmarks.height)).toBeLessThan(5);
 });
 
 test("bookmark editor saves locally and survives reload", async ({ page }) => {

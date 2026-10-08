@@ -30,7 +30,7 @@ const siteDisplayName = "perrin";
   height: min(525px, calc(100dvh - 130px));
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   gap: 17px;
   .logo {
     display: none;
@@ -43,6 +43,7 @@ const siteDisplayName = "perrin";
     width: 100%;
     height: auto;
     max-width: 560px;
+    justify-content: center;
     .logo { display: block; }
     &.hidden { display: none; }
   }
