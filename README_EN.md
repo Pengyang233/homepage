@@ -20,13 +20,13 @@ npm run lint:check
 npm run build
 ```
 
-On Windows, copy `.env.example` to `.env` manually. Configure your site in `.env`, links in `src/assets/siteLinks.json` and `src/assets/socialLinks.json`, and images under `public/images/`.
+On Windows, copy `.env.example` to `.env` manually. Configure your site in `.env`, fixed public links in `src/assets/siteLinks.json`, social links in `src/assets/socialLinks.json`, and the fixed wallpaper in `public/images/background1.jpg`. Bookmark editing and global settings are disabled in the public UI; their source components remain available for future reuse.
 
 `VITE_` variables may be exposed in browser bundles; do not put secrets in them.
 
 ## Resilience
 
-Remote wallpaper failures or timeouts fall back to local wallpaper and then a solid background, without blocking the homepage. Hitokoto failures show local placeholder text. The site does not require an external font provider. Reduced-motion preferences are respected.
+The wallpaper is fixed to `public/images/background1.jpg`; if it fails to load, a solid background is shown without blocking the homepage. Hitokoto failures show local placeholder text. The site does not require an external font provider. Reduced-motion preferences are respected.
 
 ## CI and manual checks
 

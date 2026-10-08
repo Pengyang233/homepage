@@ -5,7 +5,7 @@ export const mainStore = defineStore("main", {
     return {
       imgLoadStatus: false, // 壁纸加载状态
       innerWidth: null, // 当前窗口宽度
-      coverType: "0", // 壁纸种类
+      coverType: "0", // 保留设置字段；公开主页固定使用 background1.jpg
       siteStartShow: false, // 建站日期显示
       backgroundShow: false, // 壁纸展示状态
       boxOpenState: false, // 盒子开启状态
@@ -34,10 +34,5 @@ export const mainStore = defineStore("main", {
     setImgLoadStatus(value) {
       this.imgLoadStatus = value;
     },
-  },
-  persist: {
-    key: "data",
-    storage: window.localStorage,
-    paths: ["coverType", "siteStartShow", "footerBlur"],
   },
 });

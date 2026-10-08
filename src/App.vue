@@ -7,14 +7,12 @@
   <Transition name="fade" mode="out-in">
     <main id="main" v-if="store.imgLoadStatus">
       <div class="container" v-show="!store.backgroundShow">
-        <section class="all" v-show="!store.setOpenState">
+        <section class="all">
           <MainLeft />
           <MainRight />
           <!-- 原时光胶囊信息面板代码保留于 src/views/Box，暂不挂载。 -->
         </section>
-        <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
-          <MoreSet />
-        </section>
+        <!-- 全局设置暂时关闭；MoreSet / Set 组件文件保留。 -->
       </div>
       <!-- 移动端菜单按钮 -->
       <Icon
@@ -27,7 +25,7 @@
       </Icon>
       <!-- 页脚 -->
       <Transition name="fade" mode="out-in">
-        <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
+        <Footer class="f-ter" v-show="!store.backgroundShow" />
       </Transition>
     </main>
   </Transition>
@@ -43,7 +41,6 @@ import MainLeft from "@/views/Main/Left.vue";
 import MainRight from "@/views/Main/Right.vue";
 import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
-import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 
 const store = mainStore();

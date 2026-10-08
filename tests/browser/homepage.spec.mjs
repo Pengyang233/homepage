@@ -18,24 +18,22 @@ test("navigation uses accessible links", async ({ page }) => {
   await expect(blog).toHaveAttribute("rel", /noopener/);
 });
 
-test("failed external wallpaper and quote requests do not block homepage", async ({ page }) => {
+test("wallpaper remains fixed despite legacy browser settings", async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.setItem("data", JSON.stringify({ coverType: "2", siteStartShow: false, footerBlur: true }));
+    localStorage.setItem("data", JSON.stringify({ coverType: "2", siteStartShow: true, footerBlur: false }));
   });
   await page.route(/(?:api\.vvhan\.com|v1\.hitokoto\.cn)/, route => route.abort());
   await page.goto("/");
   await expect(page.locator("#main")).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator(".cover .bg")).toHaveAttribute("src", "/images/background1.jpg");
+  await expect(page.locator("footer#footer")).toHaveClass(/blur/);
 });
 
-test("settings can be closed by Escape", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
+test("the public page does not expose global settings", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#main")).toBeVisible();
-  await expect(page.locator(".description .quote-text")).toBeVisible();
-  await page.getByRole("button", { name: "打开设置" }).click();
-  await expect(page.locator(".set")).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.locator(".set")).toBeHidden();
+  await expect(page.getByRole("button", { name: "打开设置" })).toHaveCount(0);
+  await expect(page.locator(".set")).toHaveCount(0);
 });
 
 test("perrin identity remains prominent and desktop columns align", async ({ page }) => {
@@ -57,16 +55,18 @@ test("perrin identity remains prominent and desktop columns align", async ({ pag
   expect(Math.abs(contact.y + contact.height - bookmarks.y - bookmarks.height)).toBeLessThan(5);
 });
 
-test("bookmark editor saves locally and survives reload", async ({ page }) => {
+test("published bookmarks ignore old local edits", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("perrin-bookmarks-v1", JSON.stringify([
+      { name: "Example", link: "https://example.com/", icon: "link" },
+    ]));
+  });
   await page.goto("/");
-  await page.getByRole("button", { name: "管理常用网址" }).click();
-  await page.getByRole("textbox", { name: "网址名称" }).fill("Example");
-  await page.getByRole("textbox", { name: "网址地址" }).fill("https://example.com");
-  await page.getByRole("button", { name: "添加", exact: true }).click();
-  await page.getByRole("button", { name: "保存更改" }).click();
-  await expect(page.getByRole("link", { name: "Example" })).toHaveAttribute("href", "https://example.com/");
+  await expect(page.getByRole("button", { name: "管理常用网址" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Example" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "博客" })).toHaveAttribute("href", "https://blog.hyperrin.com/");
   await page.reload();
-  await expect(page.getByRole("link", { name: "Example" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "博客" })).toBeVisible();
 });
 
 test("weather asks for city and renders a mocked forecast", async ({ page }) => {

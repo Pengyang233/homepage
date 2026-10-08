@@ -2,9 +2,6 @@
   <section class="links cards" aria-label="常用网址">
     <div class="links-header">
       <h2>常用网址</h2>
-      <button type="button" aria-label="管理常用网址" @click="editing = true">
-        <MonoIcon name="edit" /><span>管理</span>
-      </button>
     </div>
     <div v-if="links.length" class="links-grid">
       <a v-for="item in links" :key="item.link + item.name" :href="item.link"
@@ -13,25 +10,17 @@
         <span class="link-name">{{ item.name }}</span>
       </a>
     </div>
-    <p v-else class="empty">还没有常用网址，点击「管理」添加。</p>
-    <BookmarkEditor v-if="editing" :items="links" :defaults="defaults" @close="editing = false" @save="save" />
+    <p v-else class="empty">暂无常用网址。</p>
   </section>
 </template>
 
 <script setup>
 import MonoIcon from "@/components/MonoIcon.vue";
-import BookmarkEditor from "@/components/BookmarkEditor.vue";
 import initialLinks from "@/assets/siteLinks.json";
-import { loadBookmarks, saveBookmarks, normalizeBookmark } from "@/utils/bookmarks.js";
+import { normalizeBookmark } from "@/utils/bookmarks.js";
 
-const defaults = initialLinks.map(normalizeBookmark).filter(Boolean);
-const links = ref(defaults);
-const editing = ref(false);
-const save = (items) => {
-  links.value = saveBookmarks(window.localStorage, items);
-  editing.value = false;
-};
-onMounted(() => { links.value = loadBookmarks(window.localStorage, defaults); });
+// 站点发布时的固定网址配置，所有访客看到相同内容。
+const links = initialLinks.map(normalizeBookmark).filter(Boolean);
 </script>
 
 <style scoped lang="scss">
@@ -41,15 +30,8 @@ onMounted(() => { links.value = loadBookmarks(window.localStorage, defaults); })
   flex-shrink: 0;
   background: rgb(13 22 34 / 33%);
   .links-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;
+    display: flex; align-items: center; min-height: 28px; margin-bottom: 18px;
     h2 { font-size: clamp(17px, 1vw, 19px); font-weight: 650; letter-spacing: .02em; }
-    button {
-      display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #dce5f0;
-      padding: 5px 3px; cursor: pointer; font-size: 14px; font-weight: 550; opacity: .9;
-      .mono-icon { width: 15px; height: 15px; }
-      &:hover { opacity: 1; }
-      &:focus-visible { outline: 2px solid #fff; }
-    }
   }
   .links-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 17px 12px; }
   .links-grid a {
