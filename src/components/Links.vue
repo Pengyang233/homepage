@@ -36,8 +36,9 @@ onMounted(() => { links.value = loadBookmarks(window.localStorage, defaults); })
 
 <style scoped lang="scss">
 .links {
-  padding: 23px 25px 24px;
+  padding: 23px 25px 34px;
   min-height: 250px;
+  flex-shrink: 0;
   background: rgb(13 22 34 / 33%);
   .links-header {
     display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;
@@ -66,7 +67,7 @@ onMounted(() => { links.value = loadBookmarks(window.localStorage, defaults); })
   }
   .empty { color: rgb(255 255 255 / 85%); font-size: 14px; font-weight: 500; margin-top: 30px; }
   @media (max-width: 410px) {
-    padding: 18px 12px;
+    padding: 18px 12px 28px;
     .links-grid { gap: 13px 4px; }
     .links-grid a .icon-frame { width: 46px; height: 46px; }
     .links-grid a .icon-frame .mono-icon { width: 25px; height: 25px; }
