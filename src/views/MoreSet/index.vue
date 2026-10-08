@@ -1,12 +1,17 @@
 <template>
-  <div class="set" @mouseenter="closeShow = true" @mouseleave="closeShow = false" @click.stop>
+  <div class="set" @click.stop>
     <transition name="el-fade-in-linear">
       <close-one
         class="close"
+        role="button"
+        tabindex="0"
+        aria-label="关闭设置"
+        @keydown.enter="store.setOpenState = false"
+        @keydown.space.prevent="store.setOpenState = false"
         theme="filled"
         size="28"
         fill="#ffffff60"
-        v-show="closeShow"
+        
         @click="store.setOpenState = false"
       />
     </transition>
@@ -57,7 +62,7 @@ import Set from "@/components/Set.vue";
 import config from "@/../package.json";
 
 const store = mainStore();
-const closeShow = ref(false);
+
 
 // 艺术字名称独立于站点地址
 const siteDisplayName = "perrin";
@@ -66,16 +71,14 @@ const siteDisplayName = "perrin";
 const upData = reactive({
   new: [
     "采用 Vue 进行重构",
-    "音乐歌单支持快速自定义",
     "壁纸支持个性化设置",
-    "音乐播放器支持音量控制",
   ],
-  fix: ["修复天气 API", "时光胶囊显示错误", "移动端动画及细节", "图标更换为 IconPark"],
+  fix: ["修复小屏横向滚动", "优化壁纸与一言加载降级", "改善导航键盘交互"],
 });
 
 // 跳转源代码仓库
 const jumpTo = (url) => {
-  window.open(url);
+  window.open(url, "_blank", "noopener,noreferrer");
 };
 </script>
 
@@ -86,13 +89,17 @@ const jumpTo = (url) => {
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  width: 80%;
-  height: 80%;
+  width: min(960px, 92vw);
+  height: min(720px, 90dvh);
+  overflow-y: auto;
   background: rgb(255 255 255 / 40%);
   border-radius: 6px;
-  padding: 40px;
+  padding: clamp(16px, 3vw, 40px);
 
   .close {
+    display: block;
+    z-index: 5;
+    cursor: pointer;
     position: absolute;
     top: 14px;
     right: 14px;
@@ -110,9 +117,10 @@ const jumpTo = (url) => {
 
   .el-row {
     height: 100%;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 
     .left {
+      min-width: 0;
       height: 100%;
       padding-left: 40px !important;
       padding-bottom: 20px;
@@ -210,6 +218,7 @@ const jumpTo = (url) => {
     }
 
     .right {
+      min-width: 0;
       height: 100%;
       padding-right: 40px !important;
       display: flex;
@@ -232,4 +241,10 @@ const jumpTo = (url) => {
     }
   }
 }
+  @media (max-width: 720px) {
+    .el-row { display: block; }
+    .el-row .left, .el-row .right { width: 100%; max-width: 100%; padding: 12px !important; height: auto; }
+    .el-row .left .logo { height: auto; min-height: 80px; }
+    .el-row .left .logo .bg { font-size: clamp(2rem, 12vw, 4rem); }
+  }
 </style>
