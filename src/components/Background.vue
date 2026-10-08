@@ -1,13 +1,12 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <img
-      v-show="store.imgLoadStatus"
       :src="bgUrl"
       class="bg"
       alt="cover"
       @load="imgLoadComplete"
-      @error.once="imgLoadError"
-      @animationend="imgAnimationEnd"
+      @error="imgLoadError"
+
     />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
@@ -29,17 +28,19 @@ import { Error } from "@icon-park/vue-next";
 
 const store = mainStore();
 const bgUrl = ref(null);
-const imgTimeout = ref(null);
+const fallbackUrl = `/images/background${Math.floor(Math.random() * 10 + 1)}.jpg`;
+const watchdog = ref(null);
+const notified = ref(false);
+const loaded = ref(false);
 const emit = defineEmits(["loadComplete"]);
 
 // 壁纸随机数
 // 请依据文件夹内的图片个数修改 Math.random() 后面的第一个数字
-const bgRandom = Math.floor(Math.random() * 10 + 1);
 
 // 更换壁纸链接
 const changeBg = (type) => {
   if (type == 0) {
-    bgUrl.value = `/images/background${bgRandom}.jpg`;
+    bgUrl.value = fallbackUrl;
   } else if (type == 1) {
     bgUrl.value = "https://api.dujin.org/bing/1920.php";
   } else if (type == 2) {
@@ -49,26 +50,27 @@ const changeBg = (type) => {
   }
 };
 
-// 图片加载完成
-const imgLoadComplete = () => {
-  imgTimeout.value = setTimeout(
-    () => {
-      store.setImgLoadStatus(true);
-    },
-    Math.floor(Math.random() * (600 - 300 + 1)) + 300,
-  );
-};
-
-// 图片动画完成
-const imgAnimationEnd = () => {
-  console.log("壁纸加载且动画完成");
-  // 加载完成事件
+// 无论图片是否可用，页面只完成一次初始化。
+const finishLoading = () => {
+  if (loaded.value) return;
+  loaded.value = true;
+  store.setImgLoadStatus(true);
   emit("loadComplete");
+};
+const imgLoadComplete = () => {
+  clearTimeout(watchdog.value);
+  finishLoading();
 };
 
 // 图片显示失败
 const imgLoadError = () => {
-  console.error("壁纸加载失败：", bgUrl.value);
+  clearTimeout(watchdog.value);
+  if (bgUrl.value === fallbackUrl) {
+    finishLoading(); // 本地图片也失败时仍能显示纯色背景与内容
+    return;
+  }
+  if (!notified.value) {
+    notified.value = true;
   ElMessage({
     message: "壁纸加载失败，已临时切换回默认",
     icon: h(Error, {
@@ -84,16 +86,25 @@ watch(
   () => store.coverType,
   (value) => {
     changeBg(value);
+    if (!loaded.value) startWatchdog();
   },
 );
 
+const startWatchdog = () => {
+  clearTimeout(watchdog.value);
+  watchdog.value = setTimeout(() => {
+    if (bgUrl.value !== fallbackUrl) bgUrl.value = fallbackUrl;
+    finishLoading();
+  }, 3500);
+};
+
 onMounted(() => {
-  // 加载壁纸
   changeBg(store.coverType);
+  startWatchdog();
 });
 
 onBeforeUnmount(() => {
-  clearTimeout(imgTimeout.value);
+  clearTimeout(watchdog.value);
 });
 </script>
 
@@ -106,6 +117,7 @@ onBeforeUnmount(() => {
   height: 100%;
   transition: 0.25s;
   z-index: -1;
+  background: #333;
 
   &.show {
     z-index: 1;
