@@ -140,10 +140,13 @@ watch(
         margin: 6px 0;
         text-align: center;
         line-height: 1.75rem;
+        font-size: clamp(15px, .85vw, 17px);
+        font-weight: 550;
         transition: opacity 0.2s;
 
         p:first-of-type {
           font-family: "Pacifico-Regular";
+          font-weight: 400;
         }
         p {
           overflow-wrap: anywhere;
