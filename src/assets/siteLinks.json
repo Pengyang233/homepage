@@ -1,7 +1,32 @@
 [
   {
-    "icon": "Blog",
     "name": "博客",
-    "link": "https://blog.hyperrin.com/"
+    "link": "https://blog.hyperrin.com/",
+    "icon": "book"
+  },
+  {
+    "name": "GitHub",
+    "link": "https://github.com/Pengyang233",
+    "icon": "github"
+  },
+  {
+    "name": "ChatGPT",
+    "link": "https://chatgpt.com/",
+    "icon": "bot"
+  },
+  {
+    "name": "Cloudflare",
+    "link": "https://dash.cloudflare.com/",
+    "icon": "cloud"
+  },
+  {
+    "name": "Google",
+    "link": "https://www.google.com/",
+    "icon": "search"
+  },
+  {
+    "name": "Bilibili",
+    "link": "https://www.bilibili.com/",
+    "icon": "play"
   }
 ]

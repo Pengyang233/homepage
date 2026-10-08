@@ -138,6 +138,12 @@ onBeforeUnmount(() => {
       flex-direction: row;
       justify-content: center;
       align-items: center;
+      gap: clamp(24px, 4vw, 60px);
+      max-width: 1340px;
+      margin: 0 auto;
+    }
+    @media (max-width: 720px) {
+      .all { padding: 35px 14px 70px; }
     }
     .more {
       position: fixed;

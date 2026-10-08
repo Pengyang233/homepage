@@ -1,90 +1,33 @@
 <template>
-  <!-- 社交链接 -->
-  <div class="social">
+  <nav class="social" aria-label="个人链接与联系方式">
     <div class="link">
-      <a
-        v-for="item in socialLinks"
-        :key="item.name"
-        :href="item.url"
-        target="_blank"
-        rel="noopener noreferrer"
-        :aria-label="item.name"
-        @mouseenter="socialTip = item.tip"
-        @mouseleave="socialTip = '通过这里联系我吧'"
-      >
-        <img class="icon" :src="item.icon" height="24" :alt="item.name" />
+      <a v-for="item in socialLinks" :key="item.name" :href="item.url"
+        target="_blank" rel="noopener noreferrer" :aria-label="item.name" :title="item.tip">
+        <MonoIcon :name="item.name.toLowerCase().includes('github') ? 'github' : 'link'" />
+      </a>
+      <a v-if="email" :href="'mailto:' + email" aria-label="邮件联系" title="发送邮件">
+        <MonoIcon name="mail" />
       </a>
     </div>
-    <span class="tip">{{ socialTip }}</span>
-  </div>
+  </nav>
 </template>
 
 <script setup>
 import socialLinks from "@/assets/socialLinks.json";
-
-// 社交链接提示
-const socialTip = ref("通过这里联系我吧");
+import MonoIcon from "@/components/MonoIcon.vue";
+const email = (import.meta.env.VITE_CONTACT_EMAIL || "").trim();
 </script>
 
-<style lang="scss" scoped>
-.social {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 460px;
-  width: 100%;
-  height: 42px;
-  background-color: transparent;
-  border-radius: 6px;
-  backdrop-filter: blur(0);
-  animation: fade 0.5s;
-  transition:
-    background-color 0.3s,
-    backdrop-filter 0.3s;
-  @media (max-width: 840px) {
-    max-width: 100%;
-    justify-content: center;
-    .link {
-      justify-content: space-evenly !important;
-      width: 90%;
-    }
-    .tip {
-      display: none !important;
-    }
-  }
-
-  .link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    a {
-      display: inherit;
-      .icon {
-        margin: 0 12px;
-        transition: transform 0.3s;
-        &:hover {
-          transform: scale(1.1);
-        }
-        &:active {
-          transform: scale(1);
-        }
-      }
-    }
-  }
-  .tip {
-    display: none;
-    margin-right: 12px;
-    animation: fade 0.5s;
-  }
-  @media (min-width: 768px) {
-    &:hover {
-      background-color: #00000040;
-      backdrop-filter: blur(5px);
-      .tip {
-        display: block;
-      }
-    }
-  }
+<style scoped lang="scss">
+.social { margin-top: 16px; width: 100%; max-width: 460px; }
+.link { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.link a {
+  width: 43px; height: 43px; display: grid; place-items: center;
+  border: 1px solid rgb(255 255 255 / 18%); border-radius: 12px;
+  background: rgb(255 255 255 / 7%); color: #fff;
+  transition: background .2s, transform .2s;
+  &:hover { background: rgb(255 255 255 / 20%); transform: translateY(-2px); }
+  &:focus-visible { outline: 2px solid white; outline-offset: 2px; }
 }
+@media (max-width: 720px) { .link { justify-content: center; } }
 </style>

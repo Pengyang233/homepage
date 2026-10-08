@@ -1,136 +1,34 @@
 <template>
-  <!-- 功能区域 -->
-  <div :class="store.mobileFuncState ? 'function mobile' : 'function'">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <div class="left">
-          <Hitokoto />
-        </div>
-      </el-col>
-      <el-col :span="12">
-        <div class="right cards">
-          <div class="time">
-            <div class="date">
-              <span>{{ currentTime.year }}&nbsp;年&nbsp;</span>
-              <span>{{ currentTime.month }}&nbsp;月&nbsp;</span>
-              <span>{{ currentTime.day }}&nbsp;日&nbsp;</span>
-              <span class="sm-hidden">{{ currentTime.weekday }}</span>
-            </div>
-            <div class="text">
-              <span> {{ currentTime.hour }}:{{ currentTime.minute }}:{{ currentTime.second }}</span>
-            </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
+  <div class="function cards">
+    <div class="time">{{ currentTime.hour }}:{{ currentTime.minute }}</div>
+    <div class="meta">
+      <div class="date">{{ currentTime.month }}月{{ currentTime.day }}日 · {{ currentTime.weekday }}</div>
+      <Weather />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { getCurrentTime } from "@/utils/getTime";
-import { mainStore } from "@/store";
-import Hitokoto from "@/components/Hitokoto.vue";
+import Weather from "@/components/Weather.vue";
 
-const store = mainStore();
-
-// 当前时间
-const currentTime = ref({});
-const timeInterval = ref(null);
-
-// 更新时间
-const updateTimeData = () => {
-  currentTime.value = getCurrentTime();
-};
-
-onMounted(() => {
-  updateTimeData();
-  timeInterval.value = setInterval(updateTimeData, 1000);
-});
-
-onBeforeUnmount(() => {
-  clearInterval(timeInterval.value);
-});
+const currentTime = ref(getCurrentTime());
+let intervalId;
+onMounted(() => { intervalId = setInterval(() => { currentTime.value = getCurrentTime(); }, 10_000); });
+onBeforeUnmount(() => clearInterval(intervalId));
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .function {
-  height: 165px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  &.mobile {
-    .el-row {
-      .el-col {
-        &:nth-of-type(1) {
-          display: contents;
-        }
-        &:nth-of-type(2) {
-          display: none;
-        }
-      }
-    }
+  position: relative; z-index: 5; // Weather popover must sit above the search card.
+  display: flex; gap: 25px; align-items: center; padding: 25px 30px; min-height: 125px;
+  background: rgb(13 22 34 / 28%);
+  .time { font-size: clamp(2.5rem, 4.4vw, 4.2rem); font-weight: 300; letter-spacing: -.035em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .meta {
+    padding-left: 25px; border-left: 1px solid rgb(255 255 255 / 19%); min-width: 0;
+    .date { margin-bottom: 8px; white-space: nowrap; font-size: 15px; }
   }
-  .el-row {
-    height: 100%;
-    width: 100%;
-    margin: 0 !important;
-    .el-col {
-      &:nth-of-type(1) {
-        padding-left: 0 !important;
-      }
-      &:nth-of-type(2) {
-        padding-right: 0 !important;
-      }
-      @media (max-width: 910px) {
-        &:nth-of-type(1) {
-          display: none;
-        }
-        &:nth-of-type(2) {
-          padding: 0 !important;
-          flex: none;
-          max-width: none;
-          width: 100%;
-        }
-      }
-    }
-    .left,
-    .right {
-      width: 100%;
-      height: 100%;
-    }
-    .right {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      animation: fade 0.5s;
-      .time {
-        font-size: 1.1rem;
-        text-align: center;
-        .date {
-          text-overflow: ellipsis;
-          overflow-x: hidden;
-          white-space: nowrap;
-        }
-        .text {
-          margin-top: 10px;
-          font-size: 3.25rem;
-          letter-spacing: 2px;
-          font-family: "UnidreamLED";
-        }
-        @media (min-width: 1201px) and (max-width: 1280px) {
-          font-size: 1rem;
-        }
-        @media (min-width: 911px) and (max-width: 992px) {
-          font-size: 1rem;
-          .text {
-            font-size: 2.75rem;
-          }
-        }
-      }
-    }
-  }
+  @media (max-width: 980px) { padding: 20px; gap: 15px; .meta { padding-left: 15px; } }
+  @media (max-width: 410px) { .time { font-size: 2.3rem; } .meta .date { font-size: 12px; } }
 }
 </style>

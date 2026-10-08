@@ -12,7 +12,7 @@
 import { mainStore } from "@/store";
 
 const store = mainStore();
-const fallbackUrl = `/images/background${Math.floor(Math.random() * 10 + 1)}.jpg`;
+const fallbackUrl = "/images/background1.jpg";
 const image = ref({ id: 0, url: fallbackUrl });
 const watchdog = ref(null);
 let firstReady = false;
@@ -55,7 +55,7 @@ const changeBg = (type) => {
     "2": "https://api.vvhan.com/api/wallpaper/views",
     "3": "https://api.vvhan.com/api/wallpaper/acg",
   };
-  setImage(external[type] || fallbackUrl);
+  setImage(type === "4" ? `/images/background${Math.floor(Math.random() * 10 + 1)}.jpg` : (external[type] || fallbackUrl));
 };
 
 watch(() => store.coverType, changeBg);
