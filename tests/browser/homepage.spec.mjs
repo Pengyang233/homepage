@@ -195,6 +195,7 @@ test("B2.2 clock keeps balanced hierarchy and fits small to large screens", asyn
     await expect(page.locator("#main")).toBeVisible({ timeout: 10_000 });
     if (width <= 720) await page.locator(".menu").click();
     await expect(page.locator(".function .time")).toBeVisible();
+    await expect(page.locator(".clock-caption")).toHaveCount(0);
     await expect(page.locator(".weather-trigger")).toContainText("22°");
 
     const metrics = await page.evaluate(() => {
@@ -228,6 +229,14 @@ test("B2.2 clock keeps balanced hierarchy and fits small to large screens", asyn
     expect(metrics.dateWeight).toBeGreaterThanOrEqual(500);
     expect(metrics.weatherGlass).toBe(true);
     expect(metrics.card.height).toBeGreaterThanOrEqual(139);
+    // 两行文字在左侧区域共用中心线，组合也应垂直居中。
+    const centerX = rect => rect.x + rect.width / 2;
+    const panelCenterX = centerX(metrics.clockPanel);
+    const panelCenterY = metrics.clockPanel.y + metrics.clockPanel.height / 2;
+    const groupCenterY = (metrics.clock.y + metrics.date.bottom) / 2;
+    expect(Math.abs(centerX(metrics.clock) - panelCenterX)).toBeLessThan(2);
+    expect(Math.abs(centerX(metrics.date) - panelCenterX)).toBeLessThan(2);
+    expect(Math.abs(groupCenterY - panelCenterY)).toBeLessThan(3);
     expect(metrics.clock.x).toBeGreaterThanOrEqual(metrics.card.x);
     expect(metrics.clock.right).toBeLessThanOrEqual(metrics.weather.x + 1);
     expect(metrics.date.right).toBeLessThanOrEqual(metrics.weather.x + 1);
