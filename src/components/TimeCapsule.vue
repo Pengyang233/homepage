@@ -19,7 +19,7 @@
         <el-progress :text-inside="true" :stroke-width="20" :percentage="parseFloat(item.percentage)" />
       </div>
       <!-- 建站日期 -->
-      <div v-if="store.siteStartShow" class="capsule-item start">
+      <div v-if="store.siteStartShow && startDateText" class="capsule-item start">
         <div class="item-title">{{ startDateText }}</div>
       </div>
     </div>
@@ -37,12 +37,15 @@ const timeData = ref(getTimeCapsule());
 const startDate = ref(import.meta.env.VITE_SITE_START);
 const startDateText = ref(null);
 const timeInterval = ref(null);
+const refresh = () => {
+  timeData.value = getTimeCapsule();
+  const date = startDate.value ? new Date(startDate.value) : null;
+  startDateText.value = date && !Number.isNaN(date.getTime()) ? siteDateStatistics(date) : null;
+};
 
 onMounted(() => {
-  timeInterval.value = setInterval(() => {
-    timeData.value = getTimeCapsule();
-    if (startDate.value) startDateText.value = siteDateStatistics(new Date(startDate.value));
-  }, 1000);
+  refresh();
+  timeInterval.value = setInterval(refresh, 60 * 1000);
 });
 
 onBeforeUnmount(() => {

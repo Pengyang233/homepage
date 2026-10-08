@@ -25,47 +25,21 @@ export const getCurrentTime = () => {
 };
 
 // 时光胶囊
-export const getTimeCapsule = () => {
-  const now = dayjs();
-  const dayText = {
-    day: "今日",
-    week: "本周",
-    month: "本月",
-    year: "本年",
+export const getTimeCapsule = (date = new Date()) => {
+  const now = dayjs(date);
+  const periods = {
+    day: { name: "今日", start: now.startOf("day"), end: now.add(1, "day").startOf("day"), unit: "小时" },
+    week: { name: "本周", start: now.startOf("day").subtract((now.day() + 6) % 7, "day"), unit: "天" },
+    month: { name: "本月", start: now.startOf("month"), end: now.add(1, "month").startOf("month"), unit: "天" },
+    year: { name: "本年", start: now.startOf("year"), end: now.add(1, "year").startOf("year"), unit: "天" },
   };
-  /**
-   * 计算时间差的函数
-   * @param {String} unit 时间单位，可以是 'day', 'week', 'month', 'year'
-   */
-  const getDifference = (unit) => {
-    // 获取当前时间单位的开始时间
-    const start = now.startOf(unit);
-    // 获取当前时间单位的结束时间
-    const end = now.endOf(unit);
-    // 计算总的天数或小时数
-    const total = end.diff(start, unit === "day" ? "hour" : "day") + 1;
-    // 计算已经过去的天数或小时数
-    let passed = now.diff(start, unit === "day" ? "hour" : "day");
-    if (unit === "week") {
-      passed = (passed + 6) % 7;
-    }
-    const remaining = total - passed;
-    const percentage = (passed / total) * 100;
-    // 返回数据
-    return {
-      name: dayText[unit],
-      total: total,
-      passed: passed,
-      remaining: remaining,
-      percentage: percentage.toFixed(2),
-    };
-  };
-  return {
-    day: getDifference("day"),
-    week: getDifference("week"),
-    month: getDifference("month"),
-    year: getDifference("year"),
-  };
+  periods.week.end = periods.week.start.add(7, "day");
+  return Object.fromEntries(Object.entries(periods).map(([key, p]) => {
+    const total = p.end.diff(p.start, p.unit === "小时" ? "hour" : "day");
+    const passed = Math.min(total, Math.max(0, now.diff(p.start, p.unit === "小时" ? "hour" : "day")));
+    const fraction = Math.min(1, Math.max(0, (now.valueOf() - p.start.valueOf()) / (p.end.valueOf() - p.start.valueOf())));
+    return [key, { name: p.name, total, passed, remaining: total - passed, percentage: (fraction * 100).toFixed(2) }];
+  }));
 };
 
 // 欢迎提示

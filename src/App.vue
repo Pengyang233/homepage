@@ -48,6 +48,12 @@ import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 
 const store = mainStore();
+const onEscape = (event) => {
+  if (event.key === "Escape") {
+    store.setOpenState = false;
+    store.boxOpenState = false;
+  }
+};
 
 const handleMiddleClick = (event) => {
   if (event.button !== 1 || event.target.closest("a, button, input, textarea, select, [role=button]")) return;
@@ -86,6 +92,7 @@ onMounted(() => {
 
   // 鼠标中键仅在页面非交互区域切换壁纸
   window.addEventListener("mousedown", handleMiddleClick);
+  window.addEventListener("keydown", onEscape);
 
   // 监听当前页面宽度
   getWidth();
@@ -101,6 +108,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", getWidth);
   window.removeEventListener("mousedown", handleMiddleClick);
+  window.removeEventListener("keydown", onEscape);
 });
 </script>
 
@@ -172,10 +180,12 @@ onBeforeUnmount(() => {
     overflow-y: auto;
     overflow-x: hidden;
     .container {
-      height: 721px;
+      min-height: 721px;
+      height: auto;
       .more {
-        height: 721px;
-        width: calc(100% + 6px);
+        min-height: 721px;
+        height: auto;
+        width: 100%;
       }
       @media (min-width: 391px) {
         // w 1201px ~ max
@@ -200,14 +210,15 @@ onBeforeUnmount(() => {
       }
     }
     .menu {
-      top: 605.64px; // 721px * 0.84
-      left: 170.5px; // 391 * 0.5 - 25px
+      top: min(84vh, 605px);
+      left: calc(50% - 28px);
       @media (min-width: 391px) {
         left: calc(50% - 25px);
       }
     }
     .f-ter {
-      top: 675px; // 721px - 46px
+      top: auto;
+      bottom: 0;
       @media (min-width: 391px) {
         padding-left: 6px;
       }
