@@ -38,7 +38,7 @@ npm run preview
 
 ## 页面可用性与降级
 
-默认壁纸使用本地图片；选择第三方壁纸时，加载失败或超时会回退到本地壁纸，若图片仍不可用，页面显示深色背景并正常进入主页。一言 API 请求超时或失败时显示本地文案。外部字体源已取消引用，浏览器使用本地/系统字体回退。加载动画支持系统减少动态效果设置。
+壁纸固定使用 `public/images/background1.jpg`；图片加载失败时显示深色背景，主页仍能正常进入。一言 API 请求超时或失败时显示本地文案。外部字体源已取消引用，浏览器使用本地/系统字体回退。加载动画支持系统减少动态效果设置。
 
 ## CI
 
@@ -51,7 +51,7 @@ npm run preview
 
 ## 浏览器冒烟测试
 
-`tests/browser/homepage.spec.mjs` 覆盖窄屏横向滚动、博客链接、第三方资源失败降级，以及 Esc 关闭设置。PR 会运行独立的 **Browser Smoke** GitHub Actions 工作流（Chromium），失败时上传 trace / 测试报告。
+`tests/browser/homepage.spec.mjs` 覆盖窄屏横向滚动、博客链接、固定壁纸、旧浏览器偏好失效与设置入口关闭。PR 会运行独立的 **Browser Smoke** GitHub Actions 工作流（Chromium），失败时上传 trace / 测试报告。
 
 本地复现：
 
@@ -76,11 +76,11 @@ npx playwright test --config=playwright.config.mjs
 
 主页保留原版 `perrin` 字标（`Pacifico-Regular`）与头像 `public/images/icon/perrin-logo.png`，采用轻量双栏与黑白单色图标（网站使用品牌剪影，功能按钮使用较清晰的线性图标）。主体使用系统字体栈，提升大屏可读性；`perrin` 签名字体仍为 `Pacifico-Regular`。
 
-- **图标**：GitHub、ChatGPT、Cloudflare、Google、Bilibili 的单色品牌图形参考 [Simple Icons](https://simpleicons.org/)（CC0），已内联至本地组件，不依赖第三方图标 CDN。旧版浏览器书签预设图标在读取时兼容升级，用户自定义入口不受影响。
+- **图标**：GitHub、ChatGPT、Cloudflare、Google、Bilibili 的单色品牌图形参考 [Simple Icons](https://simpleicons.org/)（CC0），已内联至本地组件，不依赖第三方图标 CDN。网址展示直接读取仓库配置。
 - **搜索**：右侧输入框支持关键词（Google / Bing / DuckDuckGo）和直接访问网址；按 `/` 或 `Ctrl/⌘+K` 聚焦。
-- **网址管理**：在「常用网址 → 管理」中增删、排序链接和选择单色图标。仅保存到当前浏览器的 `localStorage`，不会提交到 Git 仓库；换浏览器或清理网站数据会丢失自定义内容。发布时的初始入口来自 `src/assets/siteLinks.json`。
+- **固定网址**：统一读取 `src/assets/siteLinks.json`，不再提供浏览器侧编辑入口，也不读取历史本地书签。调整网址请修改配置后重新发布，原 `BookmarkEditor.vue` 代码保留。
 - **天气**：点击天气区域主动搜索城市或授权浏览器定位；使用 Open-Meteo 地理编码与天气 API，失败时显示降级提示，不会阻塞页面加载。所选坐标保存在浏览器本地。也可通过 `.env` 中 `VITE_WEATHER_CITY`、`VITE_WEATHER_LATITUDE`、`VITE_WEATHER_LONGITUDE` 配置默认城市。**注意：选择城市或定位后，坐标会发送至 Open-Meteo 服务**，不会自动请求浏览器定位权限。
 - **联系邮箱**：设置 `VITE_CONTACT_EMAIL` 才会显示邮件按钮。此字段会编译到公开网页中，不适合放私人邮箱；留空即可。
-- **壁纸**：默认固定为第一张本地背景，可在设置中选择随机本地、每日一图或第三方壁纸，第三方失败时降级为固定本地图片。
+- **壁纸与设置**：固定使用 `public/images/background1.jpg`；全局设置入口及页面暂时关闭，保留 `MoreSet` 与 `Set.vue` 源码。
 
-由于本项目是静态网站，以上个人化设置均留在浏览器本地，不提供跨设备同步；不应将私人服务 Token 或带敏感查询参数的网址写进公开配置文件。
+天气城市和搜索引擎偏好继续保存在浏览器本地；固定网址和壁纸在所有设备上相同。仓库公开，请勿提交私人服务 Token、内网管理地址或包含敏感查询参数的网址。

@@ -3,7 +3,7 @@
     <img v-for="entry in [image]" :key="entry.id" :src="entry.url" class="bg" alt="" @load="handleLoad(entry.id)" @error="handleError(entry.id)" />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
-      <a v-if="store.backgroundShow && store.coverType != '3'" class="down" :href="image.url" target="_blank" rel="noopener noreferrer">下载壁纸</a>
+      <a v-if="store.backgroundShow" class="down" :href="image.url" target="_blank" rel="noopener noreferrer">下载壁纸</a>
     </Transition>
   </div>
 </template>
@@ -49,17 +49,8 @@ const handleError = (id) => {
   else finishFirstLoad();
 };
 
-const changeBg = (type) => {
-  const external = {
-    "1": "https://api.dujin.org/bing/1920.php",
-    "2": "https://api.vvhan.com/api/wallpaper/views",
-    "3": "https://api.vvhan.com/api/wallpaper/acg",
-  };
-  setImage(type === "4" ? `/images/background${Math.floor(Math.random() * 10 + 1)}.jpg` : (external[type] || fallbackUrl));
-};
-
-watch(() => store.coverType, changeBg);
-onMounted(() => changeBg(store.coverType));
+// 固定本地壁纸，不使用浏览器历史的壁纸选择。
+onMounted(() => setImage(fallbackUrl));
 onBeforeUnmount(() => clearTimeout(watchdog.value));
 </script>
 
