@@ -116,7 +116,7 @@ const jumpTo = (url) => {
   }
 
   .el-row {
-    height: 100%;
+    min-height: 100%;
     flex-wrap: wrap;
 
     .left {
