@@ -1,7 +1,6 @@
 <template>
   <div class="function cards" aria-label="当前时间、日期与天气">
     <div class="clock-panel">
-      <span class="clock-caption">LOCAL TIME</span>
       <time class="time" :datetime="localDateTime">{{ currentTime.hour }}:{{ currentTime.minute }}</time>
       <span class="date">{{ currentTime.month }}月{{ currentTime.day }}日 · {{ currentTime.weekday }}</span>
     </div>
@@ -36,18 +35,11 @@ onBeforeUnmount(() => clearInterval(intervalId));
     min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    gap: 13px;
-    padding: 20px clamp(18px, 2.3vw, 30px);
-  }
-
-  .clock-caption {
-    color: rgb(234 241 249 / 78%);
-    font-size: 11px;
-    line-height: 1;
-    font-weight: 650;
-    letter-spacing: .15em;
+    gap: 12px;
+    padding: 20px clamp(16px, 2vw, 26px);
+    text-align: center;
   }
 
   .time {
@@ -85,8 +77,7 @@ onBeforeUnmount(() => clearInterval(intervalId));
   @media (max-width: 410px) {
     grid-template-columns: minmax(0, 1fr) minmax(106px, 38%);
     min-height: 140px;
-    .clock-panel { padding: 16px 12px; gap: 12px; }
-    .clock-caption { font-size: 10px; }
+    .clock-panel { padding: 16px 12px; gap: 11px; }
     .time { font-size: clamp(2.25rem, 11vw, 2.65rem); }
     .date { font-size: 12px; }
   }
