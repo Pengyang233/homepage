@@ -1,5 +1,9 @@
 import { maoQuotes } from "../assets/maoQuotes.js";
 
+// 语录库完整保留，首页仅轮播适合紧凑引号卡片的完整短句。
+export const MAX_DAILY_QUOTE_LENGTH = 36;
+export const displayQuotes = Object.freeze(maoQuotes.filter((quote) => [...quote].length <= MAX_DAILY_QUOTE_LENGTH));
+
 const MS_PER_DAY = 86_400_000;
 
 // 使用访问者的本地日历日期，而不是 UTC 时区或刷新次数。
@@ -18,9 +22,9 @@ const shuffleForCycle = (cycle, count) => {
 };
 
 export const getDailyQuote = (date = new Date()) => {
-  const count = maoQuotes.length;
+  const count = displayQuotes.length;
   if (!count) return "";
-  if (count === 1) return maoQuotes[0];
+  if (count === 1) return displayQuotes[0];
 
   const day = localDayNumber(date);
   const cycle = Math.floor(day / count);
@@ -32,5 +36,5 @@ export const getDailyQuote = (date = new Date()) => {
   if (count > 2 && indices[0] === shuffleForCycle(cycle - 1, count)[count - 1]) {
     [indices[0], indices[1]] = [indices[1], indices[0]];
   }
-  return maoQuotes[indices[offset]];
+  return displayQuotes[indices[offset]];
 };
