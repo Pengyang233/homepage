@@ -40,7 +40,7 @@ p {
 
 @media (max-width: 390px) {
   .message .logo { min-width: 0; }
-  .message .logo .name { min-width: 0; padding-left: 12px; }
+  .message .logo .name { min-width: 0; }
   .message .logo .name .bg { font-size: clamp(2.7rem, 13vw, 4.5rem); }
 }
 

@@ -107,6 +107,15 @@ test("avatar and original handwritten perrin wordmark stack vertically", async (
   expect(signatureBox.y).toBeGreaterThan(nameBox.y + nameBox.height - 1);
   expect(contactBox.y).toBeGreaterThan(signatureBox.y + signatureBox.height - 1);
   expect(await name.evaluate(el => getComputedStyle(el.parentElement).fontFamily)).toContain("Pacifico-Regular");
+  // 旧 text-hidden 会裁剪 Pacifico 字形的下伸部分。
+  const nameContainer = page.locator(".message .name");
+  await expect(nameContainer).not.toHaveClass(/text-hidden/);
+  const nameStyle = await nameContainer.evaluate(el => ({
+    overflow: getComputedStyle(el).overflow,
+    paddingBottom: parseFloat(getComputedStyle(el).paddingBottom),
+  }));
+  expect(nameStyle.overflow).toBe("visible");
+  expect(nameStyle.paddingBottom).toBeGreaterThanOrEqual(12);
 
   // 不仅上下排列，还要围绕左栏中心线对齐。
   const leftBox = await page.locator(".all > .left").boundingBox();

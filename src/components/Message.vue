@@ -4,7 +4,7 @@
     <!-- Logo -->
     <div class="logo">
       <img class="logo-img" :src="siteLogo" alt="logo" />
-      <div class="name text-hidden">
+      <div class="name">
         <span class="bg">{{ siteDisplayName }}</span>
       </div>
     </div>
@@ -107,7 +107,9 @@ watch(
     .name {
       width: 100%;
       min-width: 0;
-      padding: 0 0 8px;
+      // Pacifico 的 p/r 等手写笔画会超出字体度量盒；字标不能继承裁剪样式。
+      padding: 0 0 16px;
+      overflow: visible;
       text-align: center;
       line-height: 1.45;
       font-family: "Pacifico-Regular";
@@ -171,7 +173,7 @@ watch(
         width: clamp(120px, 35vw, 148px);
       }
       .name {
-        padding: 0 0 5px;
+        padding: 0 0 12px;
         .bg {
           font-size: clamp(3.1rem, 12vw, 4.4rem);
         }
