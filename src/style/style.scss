@@ -211,6 +211,8 @@ a:hover {
 // 自定义鼠标
 #cursor {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 18px;
   height: 18px;
   background: #fff;
@@ -219,7 +221,8 @@ a:hover {
   z-index: 10086;
   pointer-events: none;
   transition: 0.2s ease-in-out;
-  transition-property: background, opacity, transform;
+  transition-property: background, opacity;
+  will-change: transform;
 
   &.hidden {
     opacity: 0;
