@@ -2,7 +2,7 @@
 
 English | [简体中文](./README.md)
 
-Personal homepage and link hub built with Vue 3 and Vite.
+Personal homepage and link hub, built with Vue 3, Vite and Pinia.
 
 - Website: [hyperrin.com](https://hyperrin.com)
 - Blog: [blog.hyperrin.com](https://blog.hyperrin.com)
@@ -10,16 +10,30 @@ Personal homepage and link hub built with Vue 3 and Vite.
 
 ## Development
 
-With Node.js and npm:
+Use Node.js 20 and npm:
 
 ```bash
 npm ci
+cp .env.example .env
 npm run dev
+npm run lint:check
 npm run build
 ```
 
-Copy `.env.example` to `.env` and configure the site metadata and optional weather/music services. Customize links in `src/assets/siteLinks.json` and `src/assets/socialLinks.json`. Avatar and icons live under `public/images/icon/`.
+On Windows, copy `.env.example` to `.env` manually. Configure your site in `.env`, links in `src/assets/siteLinks.json` and `src/assets/socialLinks.json`, and images under `public/images/`.
+
+`VITE_` variables may be exposed in browser bundles; do not put secrets in them.
+
+## Resilience
+
+Remote wallpaper failures or timeouts fall back to local wallpaper and then a solid background, without blocking the homepage. Hitokoto failures show local placeholder text. The site does not require an external font provider. Reduced-motion preferences are respected.
+
+## CI and manual checks
+
+The GitHub Actions workflow runs `npm ci`, `npm run lint:check` and `npm run build` on pushes to dev/master, PRs and manual triggers. It does not deploy the site.
+
+Test narrow mobile widths (320–390px), right-click menu, keyboard-accessible links, and offline/slow-network resource fallbacks.
 
 ## Credits
 
-Adapted from the open-source project [imsyy/home](https://github.com/imsyy/home). Credit to the original author imsyy; consult the upstream repository for its terms.
+Adapted from [imsyy/home](https://github.com/imsyy/home). Thanks to its original author imsyy; the upstream copyright notices and license remain preserved.
