@@ -1,6 +1,6 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
-    <img :src="bgUrl" class="bg" alt="" @load="imgLoadComplete" @error="imgLoadError" />
+    <img :key="requestId" :src="bgUrl" class="bg" alt="" @load="imgLoadComplete" @error="imgLoadError" />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow && store.coverType != '3'" class="down" :href="bgUrl" target="_blank" rel="noopener noreferrer">下载壁纸</a>
@@ -16,6 +16,7 @@ const fallbackUrl = `/images/background${Math.floor(Math.random() * 10 + 1)}.jpg
 const bgUrl = ref(fallbackUrl);
 const watchdog = ref(null);
 const loaded = ref(false);
+const requestId = ref(0);
 const emit = defineEmits(["loadComplete"]);
 
 const finishLoading = () => {
@@ -31,6 +32,7 @@ const changeBg = (type) => {
     "2": "https://api.vvhan.com/api/wallpaper/views",
     "3": "https://api.vvhan.com/api/wallpaper/acg",
   };
+  requestId.value += 1;
   bgUrl.value = external[type] || fallbackUrl;
   if (!loaded.value) startWatchdog();
 };
@@ -43,6 +45,7 @@ const imgLoadComplete = () => {
 const imgLoadError = () => {
   clearTimeout(watchdog.value);
   if (bgUrl.value !== fallbackUrl) {
+    requestId.value += 1;
     bgUrl.value = fallbackUrl;
   }
   finishLoading();
@@ -51,7 +54,10 @@ const imgLoadError = () => {
 function startWatchdog() {
   clearTimeout(watchdog.value);
   watchdog.value = setTimeout(() => {
-    if (bgUrl.value !== fallbackUrl) bgUrl.value = fallbackUrl;
+    if (bgUrl.value !== fallbackUrl) {
+      requestId.value += 1;
+      bgUrl.value = fallbackUrl;
+    }
     finishLoading();
   }, 3500);
 }
