@@ -38,7 +38,7 @@ onBeforeUnmount(() => {
   font-size: clamp(15px, 0.85vw, 17px);
   font-weight: 550;
   line-height: 1.65;
-  text-align: center;
+  text-align: left;
   color: #fff;
   overflow-wrap: anywhere;
   text-wrap: pretty;
