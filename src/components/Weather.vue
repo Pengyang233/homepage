@@ -91,7 +91,7 @@ const refresh = async () => {
   } finally { if (alive) loading.value = false; }
 };
 const chooseLocation = (option) => {
-  const next = safeLocation(option);
+  const next = safeLocation({ ...option, label: option.label || [option.name, option.admin1].filter(Boolean).join(" · ") });
   if (!next) return;
   location.value = next;
   current.value = null;
