@@ -76,10 +76,11 @@ onBeforeUnmount(() => window.removeEventListener("keydown", keydown));
 .bookmark-dialog {
   width: min(620px, 100%); max-height: 86dvh; overflow-y: auto; border-radius: 18px;
   background: #182233; border: 1px solid rgb(255 255 255 / 18%); padding: 24px;
+  font-size: 14px; font-weight: 500;
   box-shadow: 0 25px 70px rgb(0 0 0 / 30%);
   header, footer { display: flex; justify-content: space-between; align-items: center; }
   h2 { font-size: 20px; font-weight: 600; }
-  .hint { font-size: 13px; color: #b9c5d4; margin: 10px 0 20px; }
+  .hint { font-size: 14px; color: #d1d9e4; margin: 10px 0 20px; }
   button { cursor: pointer; color: #fff; }
   button:disabled { cursor: default; opacity: .3; }
   button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid white; outline-offset: 2px; }
