@@ -48,6 +48,7 @@ import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 
 const store = mainStore();
+let disposeCursor = () => {};
 const onEscape = (event) => {
   if (event.key === "Escape") {
     store.setOpenState = false;
@@ -88,7 +89,7 @@ watch(
 
 onMounted(() => {
   // 自定义鼠标
-  cursorInit();
+  disposeCursor = cursorInit();
 
   // 鼠标中键仅在页面非交互区域切换壁纸
   window.addEventListener("mousedown", handleMiddleClick);
@@ -106,6 +107,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  disposeCursor();
   window.removeEventListener("resize", getWidth);
   window.removeEventListener("mousedown", handleMiddleClick);
   window.removeEventListener("keydown", onEscape);
