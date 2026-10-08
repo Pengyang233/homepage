@@ -28,7 +28,7 @@ export default ({ mode }) =>
           // VitePWA precaches versioned build assets; avoid CacheFirst for generic JS/CSS URLs.
           runtimeCaching: [
             {
-              urlPattern: /\\.(?:png|jpe?g|svg|gif|webp)$/i,
+              urlPattern: /\.(?:png|jpe?g|svg|gif|webp)$/i,
               handler: "StaleWhileRevalidate",
               options: {
                 cacheName: "image-cache-v2",
