@@ -20,3 +20,12 @@ test("saved bookmarks override defaults; malformed storage falls back", () => {
   data.set(BOOKMARK_STORAGE_KEY, "not-json");
   assert.equal(loadBookmarks(storage, defaults)[0].name, "Blog");
 });
+
+test("legacy default site icons upgrade without overriding custom bookmarks", () => {
+  assert.equal(normalizeBookmark({ name: "ChatGPT", link: "https://chatgpt.com/", icon: "bot" }).icon, "chatgpt");
+  assert.equal(normalizeBookmark({ name: "Cloudflare", link: "https://dash.cloudflare.com/", icon: "cloud" }).icon, "cloudflare");
+  assert.equal(normalizeBookmark({ name: "Google", link: "https://www.google.com/", icon: "search" }).icon, "google");
+  assert.equal(normalizeBookmark({ name: "Bilibili", link: "https://www.bilibili.com/", icon: "play" }).icon, "bilibili");
+  assert.equal(normalizeBookmark({ name: "Personal", link: "https://chatgpt.com/", icon: "bot" }).icon, "bot");
+  assert.equal(normalizeBookmark({ name: "ChatGPT", link: "https://chatgpt.com/", icon: "code" }).icon, "code");
+});

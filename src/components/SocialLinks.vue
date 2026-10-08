@@ -22,10 +22,11 @@ const email = (import.meta.env.VITE_CONTACT_EMAIL || "").trim();
 .social { margin-top: 16px; width: 100%; max-width: 460px; }
 .link { display: flex; align-items: center; justify-content: center; gap: 14px; }
 .link a {
-  width: 43px; height: 43px; display: grid; place-items: center;
-  border: 1px solid rgb(255 255 255 / 18%); border-radius: 12px;
+  width: 46px; height: 46px; display: grid; place-items: center;
+  border: 1px solid rgb(255 255 255 / 23%); border-radius: 12px;
   background: rgb(255 255 255 / 7%); color: #fff;
   transition: background .2s, transform .2s;
+  .mono-icon { width: 24px; height: 24px; }
   &:hover { background: rgb(255 255 255 / 20%); transform: translateY(-2px); }
   &:focus-visible { outline: 2px solid white; outline-offset: 2px; }
 }

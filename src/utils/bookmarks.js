@@ -1,5 +1,13 @@
 export const BOOKMARK_STORAGE_KEY = "perrin-bookmarks-v1";
-export const BOOKMARK_ICONS = ["link", "book", "github", "bot", "cloud", "search", "play", "code", "globe", "music", "mail"];
+export const BOOKMARK_ICONS = ["link", "book", "github", "chatgpt", "cloudflare", "google", "bilibili", "bot", "cloud", "search", "play", "code", "globe", "music", "mail"];
+
+// 仅升级旧版本预设入口；不更改用户自行配置的网址或图标。
+const LEGACY_DEFAULT_BRANDS = {
+  "https://chatgpt.com/": { name: "ChatGPT", oldIcon: "bot", newIcon: "chatgpt" },
+  "https://dash.cloudflare.com/": { name: "Cloudflare", oldIcon: "cloud", newIcon: "cloudflare" },
+  "https://www.google.com/": { name: "Google", oldIcon: "search", newIcon: "google" },
+  "https://www.bilibili.com/": { name: "Bilibili", oldIcon: "play", newIcon: "bilibili" },
+};
 
 export function normalizeBookmark(item) {
   if (!item || typeof item !== "object") return null;
@@ -9,7 +17,9 @@ export function normalizeBookmark(item) {
   try {
     const url = new URL(link);
     if (!["http:", "https:"].includes(url.protocol) || !url.hostname) return null;
-    return { name, link: url.href, icon: BOOKMARK_ICONS.includes(item.icon) ? item.icon : "link" };
+    const icon = BOOKMARK_ICONS.includes(item.icon) ? item.icon : "link";
+    const legacy = LEGACY_DEFAULT_BRANDS[url.href];
+    return { name, link: url.href, icon: legacy && name === legacy.name && icon === legacy.oldIcon ? legacy.newIcon : icon };
   } catch { return null; }
 }
 export function loadBookmarks(storage, defaults) {

@@ -71,6 +71,7 @@ const radioChange = () => {
       background-color: #ffffff30;
       color: #fff;
       font-size: 15px;
+      font-weight: 600;
       padding-left: 18px;
       border-color: transparent;
     }
@@ -86,6 +87,7 @@ const radioChange = () => {
           justify-content: space-between;
           flex-wrap: wrap;
           font-size: 14px;
+          font-weight: 500;
           .el-switch__core {
             border-color: transparent;
             background-color: #ffffff30;

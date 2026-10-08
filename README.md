@@ -74,8 +74,9 @@ npx playwright test --config=playwright.config.mjs
 
 ## 私人起始页
 
-主页保留原版 `perrin` 字标（`Pacifico-Regular`）与头像 `public/images/icon/perrin-logo.png`，采用轻量双栏与黑白线性图标。
+主页保留原版 `perrin` 字标（`Pacifico-Regular`）与头像 `public/images/icon/perrin-logo.png`，采用轻量双栏与黑白单色图标（网站使用品牌剪影，功能按钮使用较清晰的线性图标）。主体使用系统字体栈，提升大屏可读性；`perrin` 签名字体仍为 `Pacifico-Regular`。
 
+- **图标**：GitHub、ChatGPT、Cloudflare、Google、Bilibili 的单色品牌图形参考 [Simple Icons](https://simpleicons.org/)（CC0），已内联至本地组件，不依赖第三方图标 CDN。旧版浏览器书签预设图标在读取时兼容升级，用户自定义入口不受影响。
 - **搜索**：右侧输入框支持关键词（Google / Bing / DuckDuckGo）和直接访问网址；按 `/` 或 `Ctrl/⌘+K` 聚焦。
 - **网址管理**：在「常用网址 → 管理」中增删、排序链接和选择单色图标。仅保存到当前浏览器的 `localStorage`，不会提交到 Git 仓库；换浏览器或清理网站数据会丢失自定义内容。发布时的初始入口来自 `src/assets/siteLinks.json`。
 - **天气**：点击天气区域主动搜索城市或授权浏览器定位；使用 Open-Meteo 地理编码与天气 API，失败时显示降级提示，不会阻塞页面加载。所选坐标保存在浏览器本地。也可通过 `.env` 中 `VITE_WEATHER_CITY`、`VITE_WEATHER_LATITUDE`、`VITE_WEATHER_LONGITUDE` 配置默认城市。**注意：选择城市或定位后，坐标会发送至 Open-Meteo 服务**，不会自动请求浏览器定位权限。

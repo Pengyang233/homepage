@@ -146,14 +146,14 @@ onBeforeUnmount(() => { alive = false; clearInterval(intervalId); });
 .weather-trigger {
   display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: #f7f8fc;
   border: none; background: transparent; padding: 6px 0; cursor: pointer;
-  font-size: 14px; text-align: left;
-  .mono-icon { width: 18px; height: 18px; }
-  .city { color: rgb(255 255 255 / 65%); }
+  font-size: clamp(14px, .8vw, 16px); font-weight: 550; text-align: left;
+  .mono-icon { width: 20px; height: 20px; }
+  .city { color: rgb(255 255 255 / 82%); }
   &:focus-visible { outline: 2px solid #fff; border-radius: 4px; }
 }
 .city-picker {
   position: absolute; right: 0; top: calc(100% + 12px); width: min(310px, 78vw);
-  padding: 16px; z-index: 15; background: rgb(18 27 40 / 94%); font-size: 13px;
+  padding: 16px; z-index: 15; background: rgb(18 27 40 / 94%); font-size: 14px; font-weight: 500;
   label { display: block; margin-bottom: 10px; }
   .city-search { display: flex; gap: 8px; }
   input {
