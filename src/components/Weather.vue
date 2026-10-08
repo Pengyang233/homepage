@@ -3,9 +3,12 @@
     <button type="button" class="weather-trigger" :aria-label="location ? '更改天气城市' : '设置天气城市'"
       @click="editing = !editing">
       <MonoIcon :name="weatherIcon" />
-      <span v-if="current">{{ Math.round(current.temperature_2m) }}° · {{ weatherText }}</span>
-      <span v-else>{{ location ? (loading ? "天气加载中…" : "天气暂不可用") : "设置天气城市" }}</span>
-      <span class="city">{{ location?.label || "" }}</span>
+      <span v-if="current" class="temperature">{{ Math.round(current.temperature_2m) }}°</span>
+      <span v-else class="weather-status">{{ location ? (loading ? "天气加载中…" : "天气暂不可用") : "设置天气城市" }}</span>
+      <span v-if="current" class="weather-summary" :title="[weatherText, location?.label].filter(Boolean).join(' · ')">
+        {{ weatherText }}<span v-if="location" class="city"> · {{ location.label }}</span>
+      </span>
+      <span v-else-if="location" class="weather-summary city" :title="location.label">{{ location.label }}</span>
     </button>
     <div v-if="editing" class="city-picker cards">
       <label for="weather-city">天气城市（不会自动获取位置）</label>
@@ -142,17 +145,56 @@ onBeforeUnmount(() => { alive = false; clearInterval(intervalId); });
 </script>
 
 <style scoped lang="scss">
-.weather { position: relative; min-width: 0; }
+.weather { position: relative; min-width: 0; height: 100%; }
 .weather-trigger {
-  display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: #f7f8fc;
-  border: none; background: transparent; padding: 6px 0; cursor: pointer;
-  font-size: clamp(14px, .8vw, 16px); font-weight: 550; text-align: left;
-  .mono-icon { width: 20px; height: 20px; }
-  .city { color: rgb(255 255 255 / 82%); }
-  &:focus-visible { outline: 2px solid #fff; border-radius: 4px; }
+  display: flex;
+  width: 100%;
+  min-height: 150px;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 0 15px 15px 0;
+  padding: 14px 9px;
+  background: transparent;
+  color: #f7f8fc;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color .2s;
+
+  &:hover { background: rgb(255 255 255 / 5%); }
+  &:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+  .mono-icon { width: 30px; height: 30px; }
+  .temperature {
+    font-size: clamp(29px, 2.3vw, 34px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -.035em;
+    font-variant-numeric: tabular-nums;
+  }
+  .weather-status {
+    font-size: 12px;
+    font-weight: 550;
+    line-height: 1.4;
+  }
+  .weather-summary {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 550;
+    line-height: 1.35;
+    color: rgb(246 249 253 / 90%);
+  }
+  .city { color: rgb(230 237 247 / 82%); }
 }
 .city-picker {
-  position: absolute; right: 0; top: calc(100% + 12px); width: min(310px, 78vw);
+  position: absolute; right: 0; top: calc(100% + 12px);
+  width: min(310px, 78vw); max-width: calc(100vw - 24px);
   padding: 16px; z-index: 15; background: rgb(18 27 40 / 94%); font-size: 14px; font-weight: 500;
   label { display: block; margin-bottom: 10px; }
   .city-search { display: flex; gap: 8px; }
@@ -167,5 +209,14 @@ onBeforeUnmount(() => { alive = false; clearInterval(intervalId); });
   .city-results button { text-align: left; background: transparent; border: 0; padding: 9px 4px; border-radius: 5px; }
   .city-results button:hover { background: rgb(255 255 255 / 15%); }
   .weather-error { margin-top: 8px; color: #ffd7bd; }
+}
+@media (max-width: 410px) {
+  .weather-trigger {
+    min-height: 140px;
+    gap: 6px;
+    .mono-icon { width: 27px; height: 27px; }
+    .temperature { font-size: 30px; }
+    .weather-summary { font-size: 11px; }
+  }
 }
 </style>
