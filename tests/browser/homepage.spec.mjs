@@ -198,7 +198,10 @@ test("B2.2 clock keeps balanced hierarchy and fits small to large screens", asyn
     await expect(page.locator(".weather-trigger")).toContainText("22°");
 
     const metrics = await page.evaluate(() => {
-      const box = selector => document.querySelector(selector).getBoundingClientRect();
+      const box = selector => {
+        const { x, y, width, height, right, bottom } = document.querySelector(selector).getBoundingClientRect();
+        return { x, y, width, height, right, bottom };
+      };
       const style = selector => getComputedStyle(document.querySelector(selector));
       const clock = box(".function .time");
       const date = box(".function .date");
