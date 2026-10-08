@@ -20,7 +20,7 @@ const email = (import.meta.env.VITE_CONTACT_EMAIL || "").trim();
 
 <style scoped lang="scss">
 .social { margin-top: 16px; width: 100%; max-width: 460px; }
-.link { display: flex; align-items: center; gap: 14px; }
+.link { display: flex; align-items: center; justify-content: center; gap: 14px; }
 .link a {
   width: 43px; height: 43px; display: grid; place-items: center;
   border: 1px solid rgb(255 255 255 / 18%); border-radius: 12px;

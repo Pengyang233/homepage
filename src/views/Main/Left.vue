@@ -20,7 +20,7 @@ const store = mainStore();
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   // 左侧内容由签名向下展开，社交链接停靠同高右栏底边。
   @media (max-height: 720px) and (min-width: 721px) { height: 525px; }
   &.hidden { display: none; }

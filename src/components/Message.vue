@@ -82,12 +82,16 @@ watch(
   width: 100%;
   max-width: 460px;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   // 让原版头像与 Pacifico 连体签名形成上下主视觉。
   .logo {
     display: flex;
+    width: 100%;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
     animation: fade 0.5s;
 
@@ -103,7 +107,8 @@ watch(
     .name {
       width: 100%;
       min-width: 0;
-      padding: 0 0 8px 2px;
+      padding: 0 0 8px;
+      text-align: center;
       line-height: 1.45;
       font-family: "Pacifico-Regular";
       .bg {
@@ -114,11 +119,11 @@ watch(
     }
   }
 
-  // 保留原签名卡片的展开互动，与字标维持相同的左边界。
+  // 签名卡片和头像、字标共用左栏的水平中心线，保留展开交互。
   .description {
     width: 100%;
     max-width: 425px;
-    margin-top: 10px;
+    margin: 10px auto 0;
     padding: 13px 16px;
     animation: fade 0.5s;
 
@@ -129,7 +134,9 @@ watch(
 
       .text {
         min-width: 0;
+        flex: 1;
         margin: 6px 0;
+        text-align: center;
         line-height: 1.75rem;
         transition: opacity 0.2s;
 

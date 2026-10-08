@@ -107,6 +107,14 @@ test("avatar and original handwritten perrin wordmark stack vertically", async (
   expect(signatureBox.y).toBeGreaterThan(nameBox.y + nameBox.height - 1);
   expect(contactBox.y).toBeGreaterThan(signatureBox.y + signatureBox.height - 1);
   expect(await name.evaluate(el => getComputedStyle(el.parentElement).fontFamily)).toContain("Pacifico-Regular");
+
+  // 不仅上下排列，还要围绕左栏中心线对齐。
+  const leftBox = await page.locator(".left").boundingBox();
+  const centerX = box => box.x + box.width / 2;
+  const leftCenter = centerX(leftBox);
+  for (const box of [imageBox, nameBox, signatureBox, contactBox]) {
+    expect(Math.abs(centerX(box) - leftCenter)).toBeLessThan(3);
+  }
 });
 
 test("stacked identity remains accessible on narrow screens", async ({ page }) => {
@@ -121,5 +129,10 @@ test("stacked identity remains accessible on narrow screens", async ({ page }) =
     expect(signature.y).toBeGreaterThan(name.y + name.height - 1);
     expect(avatar.x).toBeGreaterThanOrEqual(0);
     expect(avatar.x + avatar.width).toBeLessThanOrEqual(width);
+    const left = await page.locator(".left").boundingBox();
+    const centerX = box => box.x + box.width / 2;
+    for (const box of [avatar, name, signature]) {
+      expect(Math.abs(centerX(box) - centerX(left))).toBeLessThan(3);
+    }
   }
 });
