@@ -11,14 +11,13 @@
 </template>
 
 <script setup>
-import { Error } from "@icon-park/vue-next";
 import { getHitokoto } from "@/api";
 import debounce from "@/utils/debounce.js";
 
 // 一言数据
 const hitokotoData = reactive({
-  text: "这里应该显示一句话",
-  from: "無名",
+  text: "记录技术、想法与生活。",
+  from: "perrin",
 });
 
 // 获取一言数据
@@ -28,15 +27,8 @@ const getHitokotoData = async () => {
     hitokotoData.text = result.hitokoto;
     hitokotoData.from = result.from;
   } catch (error) {
-    ElMessage({
-      message: "一言获取失败",
-      icon: h(Error, {
-        theme: "filled",
-        fill: "#efefef",
-      }),
-    });
-    hitokotoData.text = "这里应该显示一句话";
-    hitokotoData.from = "無名";
+    hitokotoData.text = "记录技术、想法与生活。";
+    hitokotoData.from = "perrin";
   }
 };
 

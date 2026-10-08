@@ -22,16 +22,18 @@
       <SwiperSlide v-for="site in siteLinksList" :key="site">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="item">
-            <div
+            <a
               class="item cards"
+              :href="item.link"
+              target="_blank"
+              rel="noopener noreferrer"
               :style="index < 3 ? 'margin-bottom: 20px' : null"
-              @click="jumpLink(item)"
             >
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>
               <span class="name text-hidden">{{ item.name }}</span>
-            </div>
+            </a>
           </el-col>
         </el-row>
       </SwiperSlide>
@@ -69,14 +71,7 @@ const siteIcon = {
   LaptopCode,
 };
 
-// 链接跳转
-const jumpLink = (data) => {
-  window.open(data.link, "_blank");
-};
 
-onMounted(() => {
-  console.log(siteLinks);
-});
 </script>
 
 <style lang="scss" scoped>
@@ -127,6 +122,8 @@ onMounted(() => {
   .link-all {
     height: 220px;
     .item {
+      text-decoration: none;
+      &:focus-visible { outline: 2px solid white; outline-offset: 2px; }
       height: 100px;
       width: 100%;
       display: flex;
