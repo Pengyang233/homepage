@@ -1,73 +1,66 @@
 <template>
-  <div class="hitokoto cards" @click.stop>
-    <!-- 一言内容 -->
-    <Transition name="el-fade-in-linear" mode="out-in">
-      <div :key="hitokotoData.text" class="content" @click="updateHitokoto">
-        <span class="text">{{ hitokotoData.text }}</span>
-        <span class="from">-「&nbsp;{{ hitokotoData.from }}&nbsp;」</span>
-      </div>
+  <section class="daily-quote" aria-label="每日一句">
+    <span class="eyebrow">每日一句</span>
+    <Transition name="fade" mode="out-in">
+      <blockquote :key="quote" class="quote-text">{{ quote }}</blockquote>
     </Transition>
-  </div>
+  </section>
 </template>
 
 <script setup>
-import { getHitokoto } from "@/api";
-import debounce from "@/utils/debounce.js";
+import { getDailyQuote } from "@/utils/dailyQuote.js";
 
-// 一言数据
-const hitokotoData = reactive({
-  text: "记录技术、想法与生活。",
-  from: "perrin",
+const quote = ref(getDailyQuote());
+let intervalId;
+const refreshQuote = () => { quote.value = getDailyQuote(); };
+
+onMounted(() => {
+  refreshQuote();
+  intervalId = window.setInterval(refreshQuote, 60_000);
+  document.addEventListener("visibilitychange", refreshQuote);
 });
-
-// 获取一言数据
-const getHitokotoData = async () => {
-  try {
-    const result = await getHitokoto();
-    hitokotoData.text = result.hitokoto;
-    hitokotoData.from = result.from;
-  } catch (error) {
-    hitokotoData.text = "记录技术、想法与生活。";
-    hitokotoData.from = "perrin";
-  }
-};
-
-// 更新一言数据
-const updateHitokoto = debounce(getHitokotoData, 500);
-
-onMounted(getHitokotoData);
-onBeforeUnmount(() => updateHitokoto.cancel());
+onBeforeUnmount(() => {
+  window.clearInterval(intervalId);
+  document.removeEventListener("visibilitychange", refreshQuote);
+});
 </script>
 
 <style lang="scss" scoped>
-.hitokoto {
+.daily-quote {
   width: 100%;
+  min-width: 0;
   height: 100%;
-  padding: 20px;
-  animation: fade 0.5s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 2vw, 32px);
+  padding: clamp(8px, 2.5vw, 32px);
+  text-align: center;
 
-  .content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+  .eyebrow {
+    color: rgb(245 248 252 / 70%);
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: 0.2em;
+  }
 
-    .text {
-      font-size: 1.1rem;
-      word-break: break-all;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-    }
+  .quote-text {
+    width: 100%;
+    max-width: 34ch;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(20px, 1.8vw, 27px);
+    font-weight: 600;
+    line-height: 1.8;
+    letter-spacing: 0.015em;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
 
-    .from {
-      margin-top: 10px;
-      font-weight: bold;
-      align-self: flex-end;
-      font-size: 1.1rem;
-    }
+  @media (max-width: 950px) {
+    padding: 4px;
+    .quote-text { font-size: 19px; }
   }
 }
 </style>
