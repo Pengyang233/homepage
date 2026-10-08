@@ -1,10 +1,11 @@
 <template>
-  <section class="daily-quote" aria-label="每日一句">
-    <span class="eyebrow">每日一句</span>
+  <div class="daily-quote" aria-label="每日一句">
     <Transition name="fade" mode="out-in">
-      <blockquote :key="quote" class="quote-text">{{ quote }}</blockquote>
+      <blockquote :key="quote" class="quote-text" :class="{ 'long-quote': quote.length > 60 }">
+        {{ quote }}
+      </blockquote>
     </Transition>
-  </section>
+  </div>
 </template>
 
 <script setup>
@@ -27,40 +28,31 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .daily-quote {
-  width: 100%;
+  flex: 1;
   min-width: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(20px, 2vw, 32px);
-  padding: clamp(8px, 2.5vw, 32px);
+  align-self: center;
+}
+
+.quote-text {
+  margin: 0;
+  font-size: clamp(14px, 0.83vw, 16px);
+  font-weight: 550;
+  line-height: 1.65;
   text-align: center;
+  color: #fff;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
 
-  .eyebrow {
-    color: rgb(245 248 252 / 70%);
-    font-size: 13px;
-    font-weight: 650;
-    letter-spacing: 0.2em;
+  &.long-quote {
+    font-size: clamp(13px, 0.79vw, 15px);
+    line-height: 1.6;
   }
+}
 
+@media (max-width: 720px) {
   .quote-text {
-    width: 100%;
-    max-width: 34ch;
-    margin: 0;
-    color: #fff;
-    font-size: clamp(20px, 1.8vw, 27px);
-    font-weight: 600;
-    line-height: 1.8;
-    letter-spacing: 0.015em;
-    overflow-wrap: anywhere;
-    text-wrap: pretty;
-  }
-
-  @media (max-width: 950px) {
-    padding: 4px;
-    .quote-text { font-size: 19px; }
+    font-size: 14px;
+    &.long-quote { font-size: 13px; }
   }
 }
 </style>
