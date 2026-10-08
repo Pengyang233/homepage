@@ -1,13 +1,23 @@
 [
   {
-    "name": "博客",
+    "name": "Blog",
     "link": "https://blog.hyperrin.com/",
     "icon": "book"
   },
   {
-    "name": "GitHub",
-    "link": "https://github.com/Pengyang233",
-    "icon": "github"
+    "name": "Quant",
+    "link": "https://quant.hyperrin.com/",
+    "icon": "quant"
+  },
+  {
+    "name": "Jarvis",
+    "link": "https://jarvis.hyperrin.com/",
+    "icon": "bot"
+  },
+  {
+    "name": "Nexus",
+    "link": "https://octopus.hyperrin.com/",
+    "icon": "nexus"
   },
   {
     "name": "ChatGPT",
@@ -15,14 +25,14 @@
     "icon": "chatgpt"
   },
   {
+    "name": "Gemini",
+    "link": "https://gemini.google.com/",
+    "icon": "gemini"
+  },
+  {
     "name": "Cloudflare",
     "link": "https://dash.cloudflare.com/",
     "icon": "cloudflare"
-  },
-  {
-    "name": "Google",
-    "link": "https://www.google.com/",
-    "icon": "google"
   },
   {
     "name": "Bilibili",

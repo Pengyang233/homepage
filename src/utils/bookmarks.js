@@ -1,5 +1,5 @@
 export const BOOKMARK_STORAGE_KEY = "perrin-bookmarks-v1";
-export const BOOKMARK_ICONS = ["link", "book", "github", "chatgpt", "cloudflare", "google", "bilibili", "bot", "cloud", "search", "play", "code", "globe", "music", "mail"];
+export const BOOKMARK_ICONS = ["link", "book", "github", "chatgpt", "gemini", "cloudflare", "google", "bilibili", "bot", "quant", "nexus", "cloud", "search", "play", "code", "globe", "music", "mail"];
 
 // 仅升级旧版本预设入口；不更改用户自行配置的网址或图标。
 const LEGACY_DEFAULT_BRANDS = {

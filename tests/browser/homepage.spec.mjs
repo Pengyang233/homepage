@@ -13,9 +13,27 @@ test("small viewports have no horizontal overflow", async ({ page }) => {
 test("navigation uses accessible links", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#main")).toBeVisible();
-  const blog = page.getByRole("link", { name: /博客/ });
+  const blog = page.getByRole("link", { name: "Blog" });
   await expect(blog).toHaveAttribute("href", "https://blog.hyperrin.com/");
   await expect(blog).toHaveAttribute("rel", /noopener/);
+});
+
+test("bookmarks render in the requested order across two four-item rows", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const links = page.locator(".links-grid a");
+  await expect(links).toHaveCount(8);
+  expect(await page.locator(".links-grid .link-name").allTextContents()).toEqual([
+    "Blog", "Quant", "Jarvis", "Nexus", "ChatGPT", "Gemini", "Cloudflare", "Bilibili"
+  ]);
+  const layout = await links.evaluateAll(items => items.map(item => ({
+    y: Math.round(item.getBoundingClientRect().top),
+    icon: item.querySelector("svg.mono-icon")?.getAttribute("viewBox"),
+  })));
+  expect(layout.every(item => item.icon === "0 0 24 24")).toBe(true);
+  expect(layout.slice(0, 4).every(item => item.y === layout[0].y)).toBe(true);
+  expect(layout.slice(4).every(item => item.y === layout[4].y)).toBe(true);
+  expect(layout[4].y).toBeGreaterThan(layout[0].y);
 });
 
 test("wallpaper remains fixed despite legacy browser settings", async ({ page }) => {
@@ -64,9 +82,9 @@ test("published bookmarks ignore old local edits", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("button", { name: "管理常用网址" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Example" })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "博客" })).toHaveAttribute("href", "https://blog.hyperrin.com/");
+  await expect(page.getByRole("link", { name: "Blog" })).toHaveAttribute("href", "https://blog.hyperrin.com/");
   await page.reload();
-  await expect(page.getByRole("link", { name: "博客" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Blog" })).toBeVisible();
 });
 
 test("weather asks for city and renders a mocked forecast", async ({ page }) => {
