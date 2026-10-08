@@ -1,4 +1,5 @@
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { normalizeBookmark, loadBookmarks, saveBookmarks, BOOKMARK_STORAGE_KEY } from "../src/utils/bookmarks.js";
 
@@ -28,4 +29,20 @@ test("legacy default site icons upgrade without overriding custom bookmarks", ()
   assert.equal(normalizeBookmark({ name: "Bilibili", link: "https://www.bilibili.com/", icon: "play" }).icon, "bilibili");
   assert.equal(normalizeBookmark({ name: "Personal", link: "https://chatgpt.com/", icon: "bot" }).icon, "bot");
   assert.equal(normalizeBookmark({ name: "ChatGPT", link: "https://chatgpt.com/", icon: "code" }).icon, "code");
+});
+
+test("published shortcuts match the two-row homepage layout and have registered icons", () => {
+  const shortcuts = JSON.parse(readFileSync(new URL("../src/assets/siteLinks.json", import.meta.url), "utf8"));
+  assert.deepEqual(shortcuts.map(item => item.name), [
+    "Blog", "Quant", "Jarvis", "Nexus", "ChatGPT", "Gemini", "Cloudflare", "Bilibili"
+  ]);
+  assert.deepEqual(shortcuts.map(item => item.link), [
+    "https://blog.hyperrin.com/", "https://quant.hyperrin.com/",
+    "https://jarvis.hyperrin.com/", "https://octopus.hyperrin.com/",
+    "https://chatgpt.com/", "https://gemini.google.com/",
+    "https://dash.cloudflare.com/", "https://www.bilibili.com/"
+  ]);
+  for (const item of shortcuts) {
+    assert.equal(normalizeBookmark(item)?.icon, item.icon, `Unsupported icon: ${item.name}`);
+  }
 });
