@@ -32,7 +32,7 @@ export default function cursorInit() {
   let y = 0;
   const position = () => {
     frame = null;
-    cursor.style.transform = \`translate3d(\${x - 9}px, \${y - 9}px, 0)\`;
+    cursor.style.transform = `translate3d(${x - 9}px, ${y - 9}px, 0)`;
   };
   const hide = () => {
     cursor.classList.add("hidden");
