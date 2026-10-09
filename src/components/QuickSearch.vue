@@ -5,10 +5,11 @@
       placeholder="搜索网页，或输入网址…" autocomplete="off" spellcheck="false" />
     <div class="engine-actions" role="group" aria-label="搜索引擎">
       <button v-for="option in engineOptions" :key="option.value" type="button"
-        class="engine-button" :class="{ 'is-selected': engine === option.value }"
-        :aria-label="`使用 ${option.label} 搜索`" :title="option.label"
+        class="engine-button" :class="{ 'is-selected': engine === option.value, 'engine-yandex': option.value === 'yandex' }"
+        :aria-label="query.trim() ? `使用 ${option.label} 搜索` : `打开 ${option.label} 官网`"
+        :title="query.trim() ? `${option.label} · 搜索` : `${option.label} · 打开官网`"
         :aria-pressed="engine === option.value" @click="chooseEngine(option.value)">
-        <MonoIcon :name="option.value" />
+        <MonoIcon :name="option.icon" />
       </button>
     </div>
   </form>
@@ -16,12 +17,12 @@
 
 <script setup>
 import MonoIcon from "@/components/MonoIcon.vue";
-import { resolveNavigation, SEARCH_ENGINES } from "@/utils/quickSearch.js";
+import { resolveNavigation, resolveEngineClickNavigation, SEARCH_ENGINES } from "@/utils/quickSearch.js";
 
 const engineOptions = [
-  { value: "google", label: "Google" },
-  { value: "bing", label: "Bing" },
-  { value: "yandex", label: "Yandex" },
+  { value: "google", label: "Google", icon: "googleSearch" },
+  { value: "bing", label: "Bing", icon: "bing" },
+  { value: "yandex", label: "Yandex", icon: "yandex" },
 ];
 const query = ref("");
 const searchInput = ref(null);
@@ -39,8 +40,8 @@ const navigate = (selectedEngine) => {
 const submit = () => navigate(engine.value);
 const chooseEngine = (selectedEngine) => {
   engine.value = selectedEngine;
-  // No text: only select the engine. With text: search immediately.
-  if (query.value.trim()) navigate(selectedEngine);
+  // With empty input, open the engine homepage; otherwise search immediately.
+  window.location.assign(resolveEngineClickNavigation(query.value, selectedEngine));
 };
 
 const handleKeydown = (event) => {
@@ -121,7 +122,8 @@ onBeforeUnmount(() => {
     color: rgb(255 255 255 / 64%);
     cursor: pointer;
     transition: background .18s, border-color .18s, color .18s;
-    .mono-icon { width: 22px; height: 22px; }
+    .mono-icon { width: 22px; height: 22px; stroke-width: 2.25; }
+    &.engine-yandex .mono-icon { width: 25px; height: 25px; stroke-width: 2.5; }
     &:hover { background: rgb(255 255 255 / 11%); color: #fff; }
     &:focus-visible { outline: 2px solid rgb(255 255 255 / 70%); outline-offset: 2px; }
     &.is-selected {
@@ -141,6 +143,7 @@ onBeforeUnmount(() => {
       height: 34px;
       border-radius: 9px;
       .mono-icon { width: 20px; height: 20px; }
+      &.engine-yandex .mono-icon { width: 23px; height: 23px; }
     }
   }
 }

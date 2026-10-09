@@ -4,6 +4,19 @@ export const SEARCH_ENGINES = {
   yandex: "https://yandex.com/search/?text=",
 };
 
+// Official homepages for icon clicks without a search query.
+export const SEARCH_HOME_PAGES = {
+  google: "https://www.google.com/",
+  bing: "https://www.bing.com/",
+  yandex: "https://yandex.com/",
+};
+
+export function resolveEngineClickNavigation(value, engine = "google") {
+  return String(value ?? "").trim()
+    ? resolveNavigation(value, engine)
+    : (SEARCH_HOME_PAGES[engine] || SEARCH_HOME_PAGES.google);
+}
+
 export function resolveNavigation(value, engine = "google") {
   const input = String(value ?? "").trim();
   if (!input) return null;

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { resolveNavigation, SEARCH_ENGINES } from "../src/utils/quickSearch.js";
+import { resolveNavigation, resolveEngineClickNavigation, SEARCH_ENGINES, SEARCH_HOME_PAGES } from "../src/utils/quickSearch.js";
 
 test("search terms and safe addresses", () => {
   assert.equal(resolveNavigation(""), null);
@@ -14,4 +14,23 @@ test("search terms and safe addresses", () => {
 });
 test("supported engines exclude DuckDuckGo", () => {
   assert.deepEqual(Object.keys(SEARCH_ENGINES), ["google", "bing", "yandex"]);
+});
+
+test("engine icon opens the homepage for empty input", () => {
+  assert.deepEqual(SEARCH_HOME_PAGES, {
+    google: "https://www.google.com/",
+    bing: "https://www.bing.com/",
+    yandex: "https://yandex.com/",
+  });
+  for (const [engine, homepage] of Object.entries(SEARCH_HOME_PAGES)) {
+    assert.equal(resolveEngineClickNavigation("", engine), homepage);
+    assert.equal(resolveEngineClickNavigation("   ", engine), homepage);
+  }
+  assert.equal(resolveEngineClickNavigation("", "unknown"), SEARCH_HOME_PAGES.google);
+  assert.equal(resolveNavigation("", "google"), null);
+});
+
+test("engine icon searches when text or a URL is entered", () => {
+  assert.equal(resolveEngineClickNavigation("flow matching", "yandex"), "https://yandex.com/search/?text=flow%20matching");
+  assert.equal(resolveEngineClickNavigation("github.com", "bing"), "https://github.com/");
 });

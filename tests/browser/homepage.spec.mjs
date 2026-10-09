@@ -276,26 +276,44 @@ test("B2.2 weather city picker remains usable without being clipped", async ({ p
   await expect(page.getByRole("textbox", { name: "天气城市（不会自动获取位置）" })).toBeVisible();
 });
 
-test("search bar has three monochrome engines and remembers empty-input selections", async ({ page }) => {
+
+test("search bar displays three optically balanced outline icons", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   const search = page.getByRole("textbox", { name: "搜索网页或输入网址" });
   await search.click();
   expect(await search.evaluate(el => getComputedStyle(el).outlineStyle)).toBe("none");
   await expect(page.locator(".quick-search")).toHaveCSS("border-color", "rgba(255, 255, 255, 0.4)");
-  const engines = page.getByRole("group", { name: "搜索引擎" });
-  await expect(engines.getByRole("button")).toHaveCount(3);
-  await expect(page.locator(".engine-button .mono-icon")).toHaveCount(3);
-  await expect(page.getByRole("button", { name: "使用 Google 搜索" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("group", { name: "搜索引擎" }).getByRole("button")).toHaveCount(3);
+  const icons = page.locator(".engine-button .mono-icon");
+  await expect(icons).toHaveCount(3);
+  for (let i = 0; i < 3; i++) {
+    await expect(icons.nth(i)).toHaveAttribute("fill", "none");
+    await expect(icons.nth(i)).toHaveAttribute("stroke", "currentColor");
+  }
+  await expect(page.getByRole("button", { name: "打开 Google 官网" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".submit-button")).toHaveCount(0);
   await expect(page.locator(".engine-menu")).toHaveCount(0);
+});
 
-  await page.getByRole("button", { name: "使用 Bing 搜索" }).click();
-  await expect(page.getByRole("button", { name: "使用 Bing 搜索" })).toHaveAttribute("aria-pressed", "true");
-  await expect(search).toHaveValue("");
-  await expect(page).toHaveURL(/localhost|127\.0\.0\.1/);
-  await page.reload();
-  await expect(page.getByRole("button", { name: "使用 Bing 搜索" })).toHaveAttribute("aria-pressed", "true");
+test("empty input opens each engine homepage and remembers the selection", async ({ page }) => {
+  const sites = [
+    { name: "Google", home: "https://www.google.com/" },
+    { name: "Bing", home: "https://www.bing.com/" },
+    { name: "Yandex", home: "https://yandex.com/" },
+  ];
+  for (const site of sites) {
+    await page.route(site.home, route => route.fulfill({
+      status: 200, contentType: "text/html", body: "<html><body>Mock homepage</body></html>",
+    }));
+  }
+  await page.goto("/");
+  for (const site of sites) {
+    await page.getByRole("button", { name: `打开 ${site.name} 官网` }).click();
+    await expect(page).toHaveURL(site.home);
+    await page.goto("/");
+    await expect(page.getByRole("button", { name: `打开 ${site.name} 官网` })).toHaveAttribute("aria-pressed", "true");
+  }
 });
 
 test("an engine button immediately searches populated text", async ({ page }) => {
@@ -308,18 +326,24 @@ test("an engine button immediately searches populated text", async ({ page }) =>
   await expect(page).toHaveURL("https://yandex.com/search/?text=flow%20matching");
 });
 
-test("Enter searches using the saved engine and deprecated selections fall back", async ({ page }) => {
+test("old DuckDuckGo selection resets to Google", async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("perrin-search-engine-v1", "duckduckgo");
   });
   await page.goto("/");
-  await expect(page.getByRole("button", { name: "使用 Google 搜索" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "打开 Google 官网" })).toHaveAttribute("aria-pressed", "true");
   await expect.poll(() => page.evaluate(() => localStorage.getItem("perrin-search-engine-v1"))).toBe("google");
+});
 
+test("Enter searches using the remembered engine", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("perrin-search-engine-v1", "bing");
+  });
   await page.route("https://www.bing.com/search**", route => route.fulfill({
     status: 200, contentType: "text/html", body: "<html><body>Bing test</body></html>"
   }));
-  await page.getByRole("button", { name: "使用 Bing 搜索" }).click();
+  await page.goto("/");
+  await expect(page.getByRole("button", { name: "打开 Bing 官网" })).toHaveAttribute("aria-pressed", "true");
   const search = page.getByRole("textbox", { name: "搜索网页或输入网址" });
   await search.fill("test query");
   await search.press("Enter");
