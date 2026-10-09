@@ -1,7 +1,7 @@
 export const SEARCH_ENGINES = {
   google: "https://www.google.com/search?q=",
   bing: "https://www.bing.com/search?q=",
-  duckduckgo: "https://duckduckgo.com/?q=",
+  yandex: "https://yandex.com/search/?text=",
 };
 
 export function resolveNavigation(value, engine = "google") {

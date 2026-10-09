@@ -276,54 +276,66 @@ test("B2.2 weather city picker remains usable without being clipped", async ({ p
   await expect(page.getByRole("textbox", { name: "天气城市（不会自动获取位置）" })).toBeVisible();
 });
 
-test("search bar has integrated focus styling, accessible engine picker and a balanced arrow icon", async ({ page }) => {
+test("search bar has three monochrome engines and remembers empty-input selections", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   const search = page.getByRole("textbox", { name: "搜索网页或输入网址" });
   await search.click();
-  await search.fill("flow matching");
   expect(await search.evaluate(el => getComputedStyle(el).outlineStyle)).toBe("none");
   await expect(page.locator(".quick-search")).toHaveCSS("border-color", "rgba(255, 255, 255, 0.4)");
+  const engines = page.getByRole("group", { name: "搜索引擎" });
+  await expect(engines.getByRole("button")).toHaveCount(3);
+  await expect(page.locator(".engine-button .mono-icon")).toHaveCount(3);
+  await expect(page.getByRole("button", { name: "使用 Google 搜索" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".submit-button")).toHaveCount(0);
+  await expect(page.locator(".engine-menu")).toHaveCount(0);
 
-  const icon = page.locator(".submit-button .mono-icon");
-  await expect(icon).toHaveAttribute("viewBox", "0 0 24 24");
-  expect(await icon.evaluate(el => Number.parseFloat(getComputedStyle(el).strokeWidth))).toBeGreaterThanOrEqual(2.7);
-
-  const trigger = page.getByRole("button", { name: "搜索引擎" });
-  await trigger.click();
-  const menu = page.getByRole("listbox", { name: "选择搜索引擎" });
-  await expect(menu).toBeVisible();
-  await expect(trigger).toHaveAttribute("aria-expanded", "true");
-  await expect(page.getByRole("option", { name: "Google" })).toHaveAttribute("aria-selected", "true");
-  await page.getByRole("option", { name: "DuckDuckGo" }).click();
-  await expect(menu).toHaveCount(0);
-  await expect(trigger).toContainText("DuckDuckGo");
-  await expect(search).toHaveValue("flow matching");
+  await page.getByRole("button", { name: "使用 Bing 搜索" }).click();
+  await expect(page.getByRole("button", { name: "使用 Bing 搜索" })).toHaveAttribute("aria-pressed", "true");
+  await expect(search).toHaveValue("");
+  await expect(page).toHaveURL(/localhost|127\.0\.0\.1/);
   await page.reload();
-  await expect(page.getByRole("button", { name: "搜索引擎" })).toContainText("DuckDuckGo");
-
-  await page.getByRole("button", { name: "搜索引擎" }).focus();
-  await page.keyboard.press("ArrowDown");
-  await expect(page.getByRole("listbox", { name: "选择搜索引擎" })).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("listbox", { name: "选择搜索引擎" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "搜索引擎" })).toBeFocused();
+  await expect(page.getByRole("button", { name: "使用 Bing 搜索" })).toHaveAttribute("aria-pressed", "true");
 });
 
-test("search engine menu fits narrow screens and dismisses on outside click", async ({ page }) => {
+test("an engine button immediately searches populated text", async ({ page }) => {
+  await page.route("https://yandex.com/search/**", route => route.fulfill({
+    status: 200, contentType: "text/html", body: "<html><body>Yandex test</body></html>"
+  }));
+  await page.goto("/");
+  await page.getByRole("textbox", { name: "搜索网页或输入网址" }).fill("flow matching");
+  await page.getByRole("button", { name: "使用 Yandex 搜索" }).click();
+  await expect(page).toHaveURL("https://yandex.com/search/?text=flow%20matching");
+});
+
+test("Enter searches using the saved engine and deprecated selections fall back", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("perrin-search-engine-v1", "duckduckgo");
+  });
+  await page.goto("/");
+  await expect(page.getByRole("button", { name: "使用 Google 搜索" })).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("perrin-search-engine-v1"))).toBe("google");
+
+  await page.route("https://www.bing.com/search**", route => route.fulfill({
+    status: 200, contentType: "text/html", body: "<html><body>Bing test</body></html>"
+  }));
+  await page.getByRole("button", { name: "使用 Bing 搜索" }).click();
+  const search = page.getByRole("textbox", { name: "搜索网页或输入网址" });
+  await search.fill("test query");
+  await search.press("Enter");
+  await expect(page).toHaveURL("https://www.bing.com/search?q=test%20query");
+});
+
+test("all search engines fit on narrow screens", async ({ page }) => {
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 760 });
     await page.goto("/");
     await page.locator(".menu").click();
-    const trigger = page.getByRole("button", { name: "搜索引擎" });
-    await trigger.click();
-    const menu = page.getByRole("listbox", { name: "选择搜索引擎" });
-    await expect(menu).toBeVisible();
-    const rect = await menu.boundingBox();
+    const engines = page.getByRole("group", { name: "搜索引擎" });
+    await expect(engines.getByRole("button")).toHaveCount(3);
+    const rect = await engines.boundingBox();
     expect(rect.x).toBeGreaterThanOrEqual(-1);
     expect(rect.x + rect.width).toBeLessThanOrEqual(width + 1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-    await page.getByRole("textbox", { name: "搜索网页或输入网址" }).click();
-    await expect(menu).toHaveCount(0);
   }
 });
