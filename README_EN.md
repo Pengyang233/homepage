@@ -1,39 +1,39 @@
-# perrin's homepage
+# Perrin's Homepage
 
-English | [简体中文](./README.md)
+[简体中文](./README.md) | [English](./README_EN.md)
 
-Personal homepage and link hub, built with Vue 3, Vite and Pinia.
+**Live site:** [hyperrin.com](https://hyperrin.com/)
 
-- Website: [hyperrin.com](https://hyperrin.com)
-- Blog: [blog.hyperrin.com](https://blog.hyperrin.com)
-- GitHub: [Pengyang233](https://github.com/Pengyang233)
+## Features
+
+- Responsive layout for desktop and mobile
+- Built-in search, quick navigation, and useful shortcuts
+- Weather lookup, daily quotes, and bundled wallpapers
+- Basic personalization and graceful fallbacks when resources fail
 
 ## Development
 
-Use Node.js 20 and npm:
+Node.js 20 and npm are recommended.
 
 ```bash
 npm ci
 cp .env.example .env
 npm run dev
-npm run lint:check
-npm run build
 ```
 
-On Windows, copy `.env.example` to `.env` manually. Configure your site in `.env`, fixed public links in `src/assets/siteLinks.json`, social links in `src/assets/socialLinks.json`, and the fixed wallpaper in `public/images/background1.jpg`. Bookmark editing and global settings are disabled in the public UI; their source components remain available for future reuse.
+Build for production: `npm run build`.
 
-`VITE_` variables may be exposed in browser bundles; do not put secrets in them.
+## Configuration
 
-## Resilience
+- `.env` — Site metadata
+- `src/assets/siteLinks.json` — Quick links
+- `src/assets/socialLinks.json` — Social links
+- `public/images/` — Icons and background assets
 
-The wallpaper is fixed to `public/images/background1.jpg`; if it fails to load, a solid background is shown without blocking the homepage. Hitokoto failures show local placeholder text. The site does not require an external font provider. Reduced-motion preferences are respected.
+Never commit secrets, tokens, or other sensitive information to public configuration or frontend environment variables.
 
-## CI and manual checks
+## Credits & License
 
-The GitHub Actions workflow runs `npm ci`, `npm run lint:check` and `npm run build` on pushes to dev/master, PRs and manual triggers. It does not deploy the site.
+Based on [imsyy/home](https://github.com/imsyy/home). Thanks to the original author for the open-source project.
 
-Test narrow mobile widths (320–390px), right-click menu, keyboard-accessible links, and offline/slow-network resource fallbacks.
-
-## Credits
-
-Adapted from [imsyy/home](https://github.com/imsyy/home). Thanks to its original author imsyy; the upstream copyright notices and license remain preserved.
+Licensed under the [MIT License](./LICENSE).
