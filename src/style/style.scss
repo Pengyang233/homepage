@@ -198,29 +198,61 @@ a:hover { color: #fff; }
   }
 }
 
-// 自定义鼠标
+// 自定义光标启用后才隐藏原生指针；未激活或脚本失效时保留系统指针
+html.custom-cursor-enabled,
+html.custom-cursor-enabled * {
+  cursor: none !important;
+}
+
+// 在无精确指针、减少动态效果或高对比度模式下优先使用原生指针
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce), (forced-colors: active) {
+  html.custom-cursor-enabled,
+  html.custom-cursor-enabled * {
+    cursor: revert !important;
+  }
+
+  #cursor {
+    display: none !important;
+  }
+}
+
+// 外层仅负责位移，内层伪元素负责状态动画，避免跟随鼠标产生额外延迟
 #cursor {
   position: fixed;
   top: 0;
   left: 0;
   width: 18px;
   height: 18px;
-  background: #fff;
-  border-radius: 25px;
-  opacity: 0.25;
   z-index: 10086;
   pointer-events: none;
-  transition: 0.2s ease-in-out;
-  transition-property: background, opacity;
   will-change: transform;
 
   &.hidden {
-    opacity: 0;
+    visibility: hidden;
   }
 
-  &.active {
-    opacity: 0.5;
-    transform: scale(0.5);
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 25%);
+    transform: scale(1);
+    transition: transform 0.16s ease, background-color 0.16s ease;
+  }
+
+  &.is-interactive::after {
+    background: rgb(255 255 255 / 43%);
+    transform: scale(1.28);
+  }
+
+  &.is-text::after {
+    background: rgb(255 255 255 / 16%);
+  }
+
+  &.is-pressed::after {
+    background: rgb(255 255 255 / 50%);
+    transform: scale(0.55);
   }
 }
 
