@@ -41,12 +41,10 @@ import MainLeft from "@/views/Main/Left.vue";
 import MainRight from "@/views/Main/Right.vue";
 import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
-import cursorInit from "@/utils/cursor.js";
 
 const store = mainStore();
 // 暂时隐藏页面底部版权栏，保留 Footer 组件及 LICENSE 中的原作者版权声明。
 const showFooter = false;
-let disposeCursor = () => {};
 const onEscape = (event) => {
   if (event.key === "Escape") {
     store.setOpenState = false;
@@ -86,9 +84,6 @@ watch(
 );
 
 onMounted(() => {
-  // 自定义鼠标
-  disposeCursor = cursorInit();
-
   // 鼠标中键仅在页面非交互区域切换壁纸
   window.addEventListener("mousedown", handleMiddleClick);
   window.addEventListener("keydown", onEscape);
@@ -105,7 +100,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  disposeCursor();
   window.removeEventListener("resize", getWidth);
   window.removeEventListener("mousedown", handleMiddleClick);
   window.removeEventListener("keydown", onEscape);
@@ -119,10 +113,8 @@ onBeforeUnmount(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  transform: scale(1.2);
-  transition: transform 0.3s;
-  animation: fade-blur-main-in 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  animation-delay: 0.5s;
+  animation: fade-blur-main-in 0.4s ease-out both;
+  animation-delay: 0.12s;
   .container {
     width: 100%;
     height: 100vh;
