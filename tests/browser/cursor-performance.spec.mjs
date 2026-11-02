@@ -33,3 +33,20 @@ test("wallpaper entrance avoids an animated full-screen blur filter", async ({ p
   const animation = await image.evaluate((el) => getComputedStyle(el).animationName);
   expect(animation).not.toContain("fade-blur-in");
 });
+
+test("both cursor SVG assets have a bright face and contrasting outline", async ({ request }) => {
+  for (const [path, minimumOpacity] of [
+    ["/images/cursor-default.svg", 0.8],
+    ["/images/cursor-interactive.svg", 0.9],
+  ]) {
+    const response = await request.get(path);
+    expect(response.ok()).toBe(true);
+    const svg = await response.text();
+    expect(svg).toContain('fill="#fff"');
+    expect(svg).toContain('stroke="#fff"');
+    expect(svg).toContain('stroke="#111827"');
+    expect(svg).toContain('viewBox="0 0 32 32"');
+    const fillOpacity = Number(svg.match(/fill-opacity="([0-9.]+)"/)?.[1]);
+    expect(fillOpacity).toBeGreaterThanOrEqual(minimumOpacity);
+  }
+});
