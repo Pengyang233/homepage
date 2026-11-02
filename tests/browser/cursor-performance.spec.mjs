@@ -29,6 +29,7 @@ test("wallpaper entrance avoids an animated full-screen blur filter", async ({ p
   const image = page.locator(".cover .bg");
   await expect(image).toBeVisible();
   await expect(image).toHaveCSS("filter", "none");
+  await expect(page.locator("#main")).toHaveCSS("transform", "none");
   const animation = await image.evaluate((el) => getComputedStyle(el).animationName);
   expect(animation).not.toContain("fade-blur-in");
 });
